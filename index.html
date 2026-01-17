@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="utf-8" />
+     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+     <title>Sirpam UI Builder</title>
+     <script src="https://cdn.tailwindcss.com"></script>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet" />
+     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0..200&display=swap"
+          rel="stylesheet" />
+
+     <style>
+          body {
+               font-family: 'Inter', sans-serif;
+          }
+
+          @keyframes float {
+
+               0%,
+               100% {
+                    transform: translateY(0px);
+               }
+
+               50% {
+                    transform: translateY(-15px);
+               }
+          }
+
+          @keyframes float-reverse {
+
+               0%,
+               100% {
+                    transform: translateY(0px);
+               }
+
+               50% {
+                    transform: translateY(10px);
+               }
+          }
+
+          @keyframes pulse-slow {
+
+               0%,
+               100% {
+                    opacity: 0.6;
+               }
+
+               50% {
+                    opacity: 0.3;
+               }
+          }
+
+          @keyframes shimmer {
+               0% {
+                    background-position: -200% 0;
+               }
+
+               100% {
+                    background-position: 200% 0;
+               }
+          }
+
+          @keyframes rotate-slow {
+               from {
+                    transform: rotate(0deg);
+               }
+
+               to {
+                    transform: rotate(360deg);
+               }
+          }
+
+          @keyframes scale-pulse {
+
+               0%,
+               100% {
+                    transform: scale(1);
+               }
+
+               50% {
+                    transform: scale(1.05);
+               }
+          }
+
+          @keyframes slide-in {
+               0% {
+                    opacity: 0;
+                    transform: translateX(-20px);
+               }
+
+               100% {
+                    opacity: 1;
+                    transform: translateX(0);
+               }
+          }
+
+          @keyframes typing {
+
+               0%,
+               100% {
+                    width: 0;
+               }
+
+               50% {
+                    width: 100%;
+               }
+          }
+
+          @keyframes blink {
+
+               0%,
+               50% {
+                    opacity: 1;
+               }
+
+               51%,
+               100% {
+                    opacity: 0;
+               }
+          }
+
+          .animate-float {
+               animation: float 4s ease-in-out infinite;
+          }
+
+          .animate-float-delayed {
+               animation: float 4s ease-in-out 1s infinite;
+          }
+
+          .animate-float-slow {
+               animation: float 5s ease-in-out 0.5s infinite;
+          }
+
+          .animate-float-reverse {
+               animation: float-reverse 3.5s ease-in-out infinite;
+          }
+
+          .animate-pulse-slow {
+               animation: pulse-slow 3s ease-in-out infinite;
+          }
+
+          .animate-shimmer {
+               background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+               background-size: 200% 100%;
+               animation: shimmer 2s infinite;
+          }
+
+          .animate-rotate-slow {
+               animation: rotate-slow 20s linear infinite;
+          }
+
+          .animate-scale-pulse {
+               animation: scale-pulse 3s ease-in-out infinite;
+          }
+
+          .hover-lift {
+               transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+
+          .hover-lift:hover {
+               transform: translateY(-8px);
+               box-shadow: 0 20px 40px -15px rgba(220, 38, 38, 0.3);
+          }
+
+          .nav-link::after {
+               content: '';
+               position: absolute;
+               bottom: -4px;
+               left: 0;
+               width: 0;
+               height: 2px;
+               background-color: #dc2626;
+               transition: width 0.3s ease;
+          }
+
+          .nav-link:hover::after {
+               width: 100%;
+          }
+
+          .glass-card {
+               background: rgba(255, 255, 255, 0.85);
+               backdrop-filter: blur(10px);
+               border: 1px solid rgba(255, 255, 255, 0.5);
+          }
+
+          .glow-red {
+               box-shadow: 0 0 40px rgba(220, 38, 38, 0.3);
+          }
+
+          .gradient-border {
+               background: linear-gradient(135deg, #dc2626, #f87171, #dc2626);
+               padding: 2px;
+               border-radius: 1.5rem;
+          }
+
+          .cursor-blink::after {
+               content: '|';
+               animation: blink 1s infinite;
+               color: #dc2626;
+          }
+     </style>
+</head>
+
+<body class="bg-red-50 text-gray-900">
+
+     <!-- Top Navigation Bar -->
+     <nav class="fixed top-0 w-full z-50 border-b border-red-100 bg-white/90 backdrop-blur-sm">
+          <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+               <div class="flex items-center gap-2 cursor-pointer group">
+                    <div class="w-10 h-10 text-red-600 transition-transform duration-300 group-hover:scale-110">
+                         <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                              <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                   fill="currentColor" fill-rule="evenodd"></path>
+                         </svg>
+                    </div>
+                    <h2 class="text-xl font-bold tracking-tight text-red-600">Sirpam</h2>
+               </div>
+               <div class="hidden md:flex items-center gap-8">
+                    <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors"
+                         href="#">Features</a>
+                    <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors"
+                         href="#">Docs</a>
+                    <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors"
+                         href="./workspace.html">Workspace</a>
+                    <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors"
+                         href="#">Templates</a>
+               </div>
+               <div class="flex items-center gap-3">
+                    <button onclick="locateToLogin()"
+                         class="hidden sm:flex min-w-20 cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-red-100 text-red-600 text-sm font-bold transition-all hover:bg-red-200">
+                         Login
+                    </button>
+                    <button onclick="locateToSignUp()"
+                         class="flex min-w-28 cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-red-600 text-white text-sm font-bold shadow-lg shadow-red-600/30 hover:bg-red-700 hover:shadow-red-600/50 transition-all">
+                         Get Started
+                    </button>
+               </div>
+          </div>
+     </nav>
+
+     <main class="pt-16">
+          <!-- Hero Section -->
+          <section class="relative min-h-screen flex items-center justify-center overflow-hidden px-6 py-20">
+
+               <!-- Background Decorations -->
+               <div class="absolute top-20 left-10 w-72 h-72 bg-red-200 rounded-full blur-3xl animate-pulse-slow"></div>
+               <div class="absolute bottom-20 right-10 w-96 h-96 bg-red-300 rounded-full blur-3xl animate-pulse-slow">
+               </div>
+               <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-red-100 rounded-full blur-3xl">
+               </div>
+
+               <div class="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <!-- LEFT CONTENT -->
+                    <div class="flex flex-col gap-8 order-2 lg:order-1">
+                         <div class="flex flex-col gap-6">
+                              <h1 class="text-5xl md:text-6xl font-black leading-tight tracking-tight text-gray-900">
+                                   Build Custom UI
+                                   <span class="block mt-2 text-red-600">10x Faster</span>
+                              </h1>
+                              <p class="text-lg text-gray-600 max-w-xl leading-relaxed">
+                                   Drag and drop components and deploy custom apps for you in minutes not weeks.
+                                   <span class="text-red-600 font-semibold">Secure, scalable, and fully
+                                        customizable.</span>
+                              </p>
+                         </div>
+                         <div class="flex flex-wrap gap-4">
+                              <a href="./workspace.html">
+                                   <button
+                                        class="group flex items-center gap-2 rounded-xl h-14 px-8 bg-red-600 text-white font-bold text-lg shadow-xl shadow-red-600/30 hover:bg-red-700 hover:shadow-red-600/50 transition-all">
+                                        Start Building
+                                        <span
+                                             class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                   </button>
+                              </a>
+                              <button
+                                   class="group flex items-center gap-2 rounded-xl h-14 px-6 border-2 border-red-200 bg-white text-gray-900 font-bold hover:border-red-400 hover:bg-red-50 transition-all">
+                                   <span class="material-symbols-outlined text-red-600">play_circle</span>
+                                   Watch Demo
+                              </button>
+                         </div>
+                    </div>
+
+                    <!-- RIGHT VISUAL - Enhanced UI Builder Mockup -->
+                    <div class="relative order-1 lg:order-2">
+                         <!-- Main Container with gradient border -->
+                         <div class="gradient-border">
+                              <div
+                                   class="w-full aspect-[4/3] relative rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
+
+                                   <!-- Window Header -->
+                                   <div
+                                        class="flex items-center justify-between px-4 py-3 bg-slate-800/80 border-b border-slate-700">
+                                        <div class="flex items-center gap-2">
+                                             <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                             <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                             <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        </div>
+                                        <div
+                                             class="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-slate-700/50 text-slate-400 text-xs">
+                                             <span class="material-symbols-outlined text-sm">public</span>
+                                             sirpam.app/my-project
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-slate-400 text-lg hover:text-white cursor-pointer transition-colors">remove</span>
+                                             <span
+                                                  class="material-symbols-outlined text-slate-400 text-lg hover:text-white cursor-pointer transition-colors">crop_square</span>
+                                             <span
+                                                  class="material-symbols-outlined text-slate-400 text-lg hover:text-red-400 cursor-pointer transition-colors">close</span>
+                                        </div>
+                                   </div>
+
+                                   <!-- Main Content Area -->
+                                   <div class="flex-1 flex">
+                                        <!-- Left Sidebar - Components -->
+                                        <div
+                                             class="w-16 bg-slate-800/50 border-r border-slate-700 flex flex-col items-center py-4 gap-3">
+                                             <div
+                                                  class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white cursor-pointer hover:bg-red-500 transition-colors">
+                                                  <span class="material-symbols-outlined text-xl">widgets</span>
+                                             </div>
+                                             <div
+                                                  class="w-10 h-10 rounded-xl bg-slate-700/50 flex items-center justify-center text-slate-400 cursor-pointer hover:bg-slate-700 hover:text-white transition-colors">
+                                                  <span class="material-symbols-outlined text-xl">format_shapes</span>
+                                             </div>
+                                             <div
+                                                  class="w-10 h-10 rounded-xl bg-slate-700/50 flex items-center justify-center text-slate-400 cursor-pointer hover:bg-slate-700 hover:text-white transition-colors">
+                                                  <span class="material-symbols-outlined text-xl">image</span>
+                                             </div>
+                                             <div
+                                                  class="w-10 h-10 rounded-xl bg-slate-700/50 flex items-center justify-center text-slate-400 cursor-pointer hover:bg-slate-700 hover:text-white transition-colors">
+                                                  <span class="material-symbols-outlined text-xl">code</span>
+                                             </div>
+                                             <div
+                                                  class="mt-auto w-10 h-10 rounded-xl bg-slate-700/50 flex items-center justify-center text-slate-400 cursor-pointer hover:bg-slate-700 hover:text-white transition-colors">
+                                                  <span class="material-symbols-outlined text-xl">settings</span>
+                                             </div>
+                                        </div>
+
+                                        <!-- Canvas Area -->
+                                        <div class="flex-1 p-4 relative overflow-hidden">
+                                             <!-- Grid Pattern -->
+                                             <div class="absolute inset-0 opacity-20"
+                                                  style="background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px;">
+                                             </div>
+
+                                             <!-- Preview Card - Main Component -->
+                                             <div class="relative z-10 glass-card rounded-2xl p-4 shadow-2xl animate-float"
+                                                  style="animation-duration: 5s;">
+                                                  <!-- Card Header -->
+                                                  <div class="flex items-center justify-between mb-4">
+                                                       <div class="flex items-center gap-3">
+                                                            <div
+                                                                 class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold text-sm">
+                                                                 S</div>
+                                                            <div>
+                                                                 <div class="font-semibold text-gray-800 text-sm">
+                                                                      Dashboard</div>
+                                                                 <div class="text-xs text-gray-500">Analytics Overview
+                                                                 </div>
+                                                            </div>
+                                                       </div>
+                                                       <span
+                                                            class="material-symbols-outlined text-gray-400">more_horiz</span>
+                                                  </div>
+
+                                                  <!-- Mini Chart -->
+                                                  <div class="flex items-end gap-1 h-16 mb-4">
+                                                       <div class="flex-1 bg-red-200 rounded-t-sm" style="height: 40%;">
+                                                       </div>
+                                                       <div class="flex-1 bg-red-300 rounded-t-sm" style="height: 65%;">
+                                                       </div>
+                                                       <div class="flex-1 bg-red-400 rounded-t-sm" style="height: 45%;">
+                                                       </div>
+                                                       <div class="flex-1 bg-red-500 rounded-t-sm" style="height: 80%;">
+                                                       </div>
+                                                       <div class="flex-1 bg-red-600 rounded-t-sm"
+                                                            style="height: 100%;"></div>
+                                                       <div class="flex-1 bg-red-500 rounded-t-sm" style="height: 70%;">
+                                                       </div>
+                                                       <div class="flex-1 bg-red-400 rounded-t-sm" style="height: 55%;">
+                                                       </div>
+                                                  </div>
+
+                                                  <!-- Stats Row -->
+                                                  <div class="grid grid-cols-3 gap-2">
+                                                       <div class="bg-red-50 rounded-lg p-2 text-center">
+                                                            <div class="text-red-600 font-bold text-sm">2.4K</div>
+                                                            <div class="text-gray-500 text-xs">Views</div>
+                                                       </div>
+                                                       <div class="bg-green-50 rounded-lg p-2 text-center">
+                                                            <div class="text-green-600 font-bold text-sm">+18%</div>
+                                                            <div class="text-gray-500 text-xs">Growth</div>
+                                                       </div>
+                                                       <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                                            <div class="text-blue-600 font-bold text-sm">847</div>
+                                                            <div class="text-gray-500 text-xs">Users</div>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div>
+
+                                        <!-- Right Panel - Properties -->
+                                        <div class="w-40 bg-slate-800/50 border-l border-slate-700 p-3 hidden sm:block">
+                                             <div class="text-xs text-slate-400 font-medium mb-3">Properties</div>
+
+                                             <div class="space-y-3">
+                                                  <div>
+                                                       <div class="text-xs text-slate-500 mb-1">Background</div>
+                                                       <div class="flex gap-1">
+                                                            <div
+                                                                 class="w-5 h-5 rounded bg-red-500 cursor-pointer ring-2 ring-white ring-offset-1 ring-offset-slate-800">
+                                                            </div>
+                                                            <div
+                                                                 class="w-5 h-5 rounded bg-blue-500 cursor-pointer hover:ring-2 hover:ring-white/50 transition-all">
+                                                            </div>
+                                                            <div
+                                                                 class="w-5 h-5 rounded bg-green-500 cursor-pointer hover:ring-2 hover:ring-white/50 transition-all">
+                                                            </div>
+                                                            <div
+                                                                 class="w-5 h-5 rounded bg-purple-500 cursor-pointer hover:ring-2 hover:ring-white/50 transition-all">
+                                                            </div>
+                                                       </div>
+                                                  </div>
+
+                                                  <div>
+                                                       <div class="text-xs text-slate-500 mb-1">Border Radius</div>
+                                                       <div class="h-1.5 bg-slate-700 rounded-full">
+                                                            <div class="h-full w-3/4 bg-red-500 rounded-full"></div>
+                                                       </div>
+                                                  </div>
+
+                                                  <div>
+                                                       <div class="text-xs text-slate-500 mb-1">Shadow</div>
+                                                       <div class="h-1.5 bg-slate-700 rounded-full">
+                                                            <div class="h-full w-1/2 bg-red-500 rounded-full"></div>
+                                                       </div>
+                                                  </div>
+
+                                                  <div>
+                                                       <div class="text-xs text-slate-500 mb-1">Opacity</div>
+                                                       <div class="h-1.5 bg-slate-700 rounded-full">
+                                                            <div class="h-full w-full bg-red-500 rounded-full"></div>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+
+                                   <!-- Bottom Bar -->
+                                   <div
+                                        class="flex items-center justify-between px-4 py-2 bg-slate-800/80 border-t border-slate-700">
+                                        <div class="flex items-center gap-4 text-xs text-slate-400">
+                                             <span class="flex items-center gap-1">
+                                                  <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                                  Auto-saving
+                                             </span>
+                                             <span>Last saved: Just now</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                             <button
+                                                  class="px-3 py-1 rounded-md bg-slate-700 text-slate-300 text-xs hover:bg-slate-600 transition-colors">Preview</button>
+                                             <button
+                                                  class="px-3 py-1 rounded-md bg-red-600 text-white text-xs hover:bg-red-500 transition-colors flex items-center gap-1">
+                                                  <span class="material-symbols-outlined text-sm">rocket_launch</span>
+                                                  Deploy
+                                             </button>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>
+
+                         <!-- Floating Elements -->
+                         <div
+                              class="absolute -top-6 -right-6 bg-white rounded-2xl px-4 py-3 shadow-2xl border border-red-100 animate-float z-20">
+                              <div class="flex items-center gap-3">
+                                   <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-green-600">check_circle</span>
+                                   </div>
+                                   <div>
+                                        <div class="font-semibold text-sm text-gray-800">Live Preview</div>
+                                        <div class="text-xs text-gray-500">Changes saved</div>
+                                   </div>
+                              </div>
+                         </div>
+
+                         <!-- Animated Ring -->
+                         <div
+                              class="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] aspect-square">
+                              <div
+                                   class="absolute inset-0 rounded-full border-2 border-dashed border-red-200 animate-rotate-slow">
+                              </div>
+                              <div class="absolute inset-8 rounded-full border border-red-100 animate-rotate-slow"
+                                   style="animation-direction: reverse; animation-duration: 30s;"></div>
+                         </div>
+                    </div>
+               </div>
+
+               <!-- Scroll Indicator -->
+               <div class="absolute bottom-16 flex flex-col items-center justify-center gap-2 animate-bounce">
+                    <span class="text-sm text-gray-500">Scroll to explore</span>
+                    <span class="material-symbols-outlined text-red-600">keyboard_arrow_down</span>
+               </div>
+          </section>
+
+          <!-- How It Works Section -->
+          <section class="py-24 bg-white">
+               <div class="max-w-7xl mx-auto px-6">
+                    <div class="flex flex-col items-center text-center gap-4 mb-16">
+                         <h2 class="text-4xl md:text-5xl font-black tracking-tight text-gray-900">
+                              How It <span class="text-red-600">Works</span>
+                         </h2>
+                         <p class="text-gray-600 text-lg max-w-xl">
+                              Three simple steps to transform your workflow and build amazing interfaces.
+                         </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                         <!-- Step 1 -->
+                         <div class="group flex flex-col p-8 rounded-3xl bg-red-50 border border-red-100 hover-lift">
+                              <div
+                                   class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-lg mb-6">
+                                   1</div>
+                              <div
+                                   class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors shadow-md">
+                                   <span class="material-symbols-outlined text-4xl">dashboard_customize</span>
+                              </div>
+                              <h3 class="text-2xl font-bold mb-3 group-hover:text-red-600 transition-colors">Choose
+                                   Template</h3>
+                              <p class="text-gray-600 leading-relaxed">
+                                   Start with a pre-built template or create from scratch. Pick your perfect starting
+                                   point.
+                              </p>
+                         </div>
+
+                         <!-- Step 2 -->
+                         <div class="group flex flex-col p-8 rounded-3xl bg-red-50 border border-red-100 hover-lift">
+                              <div
+                                   class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-lg mb-6">
+                                   2</div>
+                              <div
+                                   class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors shadow-md">
+                                   <span class="material-symbols-outlined text-4xl">layers</span>
+                              </div>
+                              <h3 class="text-2xl font-bold mb-3 group-hover:text-red-600 transition-colors">Drag & Drop
+                              </h3>
+                              <p class="text-gray-600 leading-relaxed">
+                                   Add buttons, forms, layouts and more by simply dragging them onto your canvas.
+                              </p>
+                         </div>
+
+                         <!-- Step 3 -->
+                         <div class="group flex flex-col p-8 rounded-3xl bg-red-50 border border-red-100 hover-lift">
+                              <div
+                                   class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-bold text-lg mb-6">
+                                   3</div>
+                              <div
+                                   class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-red-600 mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors shadow-md">
+                                   <span class="material-symbols-outlined text-4xl">rocket_launch</span>
+                              </div>
+                              <h3 class="text-2xl font-bold mb-3 group-hover:text-red-600 transition-colors">Deploy
+                                   Instantly</h3>
+                              <p class="text-gray-600 leading-relaxed">
+                                   Click deploy and your app goes live immediately. Share with the world.
+                              </p>
+                         </div>
+                    </div>
+               </div>
+          </section>
+
+          <!-- CTA Section -->
+          <section class="max-w-7xl mx-auto px-6 py-24">
+               <div class="relative rounded-3xl overflow-hidden bg-red-600">
+                    <!-- Pattern -->
+                    <div class="absolute inset-0 opacity-10"
+                         style="background-image: radial-gradient(white 2px, transparent 2px); background-size: 24px 24px;">
+                    </div>
+
+                    <!-- Decorative Circles -->
+                    <div class="absolute top-8 left-8 w-20 h-20 rounded-full bg-white/10"></div>
+                    <div class="absolute bottom-8 right-12 w-32 h-32 rounded-full bg-white/10"></div>
+
+                    <div class="relative z-10 p-12 lg:p-20 flex flex-col items-center text-center gap-8">
+                         <h2 class="text-4xl lg:text-5xl font-black text-white leading-tight">
+                              Ready to build your
+                              <span class="inline-block px-4 py-2 bg-white/20 rounded-2xl mt-2">Next Tool?</span>
+                         </h2>
+                         <p class="text-white/80 text-lg max-w-xl">
+                              Join thousands of developers who are building faster with Sirpam.
+                         </p>
+                         <div class="flex flex-wrap justify-center gap-4">
+                              <button
+                                   class="group flex items-center gap-2 bg-white text-red-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-red-50 transition-all shadow-xl">
+                                   Get Started Free
+                                   <span
+                                        class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                              </button>
+                         </div>
+                    </div>
+               </div>
+          </section>
+     </main>
+
+     <!-- Footer -->
+     <footer class="border-t border-red-100 py-16 bg-white">
+          <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-5 gap-12">
+               <div class="col-span-2">
+                    <div class="flex items-center gap-2 mb-6 cursor-pointer group">
+                         <div class="w-10 h-10 text-red-600 transition-transform duration-300 group-hover:scale-110">
+                              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                   <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                        fill="currentColor" fill-rule="evenodd"></path>
+                              </svg>
+                         </div>
+                         <h2 class="text-xl font-bold tracking-tight text-red-600">Sirpam</h2>
+                    </div>
+                    <p class="text-gray-600 mb-6 max-w-xs">
+                         Empowering developers to build custom UI without writing code.
+                    </p>
+                    <div class="flex gap-4">
+                         <a href="#"
+                              class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all">
+                              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                   <path
+                                        d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                              </svg>
+                         </a>
+                         <a href="#"
+                              class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all">
+                              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                   <path
+                                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                              </svg>
+                         </a>
+                         <a href="#"
+                              class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-600 hover:text-white transition-all">
+                              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                   <path
+                                        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                              </svg>
+                         </a>
+                    </div>
+               </div>
+               <div>
+                    <h4 class="font-bold mb-6 text-gray-900">Product</h4>
+                    <ul class="flex flex-col gap-4 text-gray-600 text-sm">
+                         <li><a class="hover:text-red-600 transition-colors" href="#">Features</a></li>
+                         <li><a class="hover:text-red-600 transition-colors" href="#">Templates</a></li>
+                    </ul>
+               </div>
+               <div>
+                    <h4 class="font-bold mb-6 text-gray-900">Legal</h4>
+                    <ul class="flex flex-col gap-4 text-gray-600 text-sm">
+                         <li><a class="hover:text-red-600 transition-colors" href="#">Privacy</a></li>
+                         <li><a class="hover:text-red-600 transition-colors" href="#">Terms</a></li>
+                         <li><a class="hover:text-red-600 transition-colors" href="#">Security</a></li>
+                    </ul>
+               </div>
+          </div>
+          <div
+               class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-red-100 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
+               <p>© 2026 Sirpam. All rights reserved.</p>
+          </div>
+     </footer>
+
+     <script>
+          function locateToLogin() {
+               window.location.href = "/login.html";
+          }
+
+          function locateToSignUp() {
+               window.location.href = "/signup.html";
+          }
+     </script>
+</body>
+
+</html>

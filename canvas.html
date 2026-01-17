@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+     <meta charset="utf-8" />
+     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+     <title>UI Builder Canvas - Sirpam</title>
+     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet" />
+
+     <script>
+          tailwind.config = {
+               theme: {
+                    extend: {
+                         colors: {
+                              "primary": "#dc2626",
+                              "primary-light": "#ef4444",
+                              "primary-dark": "#b91c1c",
+                              "background-light": "#fef2f2",
+                              "background-dark": "#1a0a0a",
+                         },
+                         fontFamily: {
+                              "display": ["Inter"]
+                         },
+                    },
+               },
+          }
+     </script>
+
+     <style>
+          body {
+               font-family: 'Inter', sans-serif;
+          }
+
+          .material-symbols-outlined {
+               font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+          }
+
+          .canvas-grid {
+               background-image: radial-gradient(#fca5a5 0.5px, transparent 0.5px);
+               background-size: 20px 20px;
+          }
+
+          /* Tab switching animations */
+          .tab-content {
+               display: none;
+          }
+
+          .tab-content.active {
+               display: block;
+               animation: fadeIn 0.2s ease-in-out;
+          }
+
+          @keyframes fadeIn {
+               from {
+                    opacity: 0;
+                    transform: translateY(5px);
+               }
+
+               to {
+                    opacity: 1;
+                    transform: translateY(0);
+               }
+          }
+
+          .tab-button.active {
+               background-color: white;
+               color: #dc2626;
+               border-color: #dc2626;
+          }
+
+          /* Custom dropdown styling */
+          .custom-dropdown {
+               position: relative;
+          }
+
+          .custom-dropdown-menu {
+               position: absolute;
+               top: 100%;
+               left: 0;
+               right: 0;
+               background: white;
+               border: 1px solid #fecaca;
+               border-radius: 0.5rem;
+               box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+               z-index: 50;
+               display: none;
+          }
+
+          .custom-dropdown.open .custom-dropdown-menu {
+               display: block;
+          }
+
+          /* Color picker style */
+          .color-preview {
+               width: 24px;
+               height: 24px;
+               border-radius: 4px;
+               border: 1px solid #fecaca;
+               cursor: pointer;
+          }
+
+          /* Range slider styling */
+          input[type="range"] {
+               -webkit-appearance: none;
+               height: 4px;
+               border-radius: 2px;
+               background: #fecaca;
+               outline: none;
+          }
+
+          input[type="range"]::-webkit-slider-thumb {
+               -webkit-appearance: none;
+               width: 16px;
+               height: 16px;
+               border-radius: 50%;
+               background: #dc2626;
+               cursor: pointer;
+               border: 2px solid white;
+               box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          }
+
+          /* Toggle switch */
+          .toggle-switch {
+               position: relative;
+               display: inline-block;
+               width: 44px;
+               height: 24px;
+          }
+
+          .toggle-switch input {
+               opacity: 0;
+               width: 0;
+               height: 0;
+          }
+
+          .toggle-slider {
+               position: absolute;
+               cursor: pointer;
+               top: 0;
+               left: 0;
+               right: 0;
+               bottom: 0;
+               background-color: #ccc;
+               transition: .4s;
+               border-radius: 24px;
+          }
+
+          .toggle-slider:before {
+               position: absolute;
+               content: "";
+               height: 16px;
+               width: 16px;
+               left: 4px;
+               bottom: 4px;
+               background-color: white;
+               transition: .4s;
+               border-radius: 50%;
+          }
+
+          input:checked+.toggle-slider {
+               background-color: #dc2626;
+          }
+
+          input:checked+.toggle-slider:before {
+               transform: translateX(20px);
+          }
+
+          /* Custom scrollbar */
+          ::-webkit-scrollbar {
+               width: 6px;
+               height: 6px;
+          }
+
+          ::-webkit-scrollbar-track {
+               background: #fef2f2;
+               border-radius: 3px;
+          }
+
+          ::-webkit-scrollbar-thumb {
+               background: #fca5a5;
+               border-radius: 3px;
+          }
+
+          ::-webkit-scrollbar-thumb:hover {
+               background: #f87171;
+          }
+     </style>
+</head>
+
+<body class="bg-background-light font-display text-gray-900 overflow-hidden h-screen">
+     <div class="flex flex-col h-full">
+
+          <!-- Header -->
+          <header class="flex items-center justify-between border-b border-red-100 bg-white px-6 py-3 shrink-0">
+               <div class="flex items-center gap-4">
+                    <a href="./index.html" class="flex items-center gap-2 group">
+                         <div class="w-8 h-8 text-red-600 transition-transform duration-300 group-hover:scale-110">
+                              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                   <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                        fill="currentColor" fill-rule="evenodd"></path>
+                              </svg>
+                         </div>
+                         <span class="text-xl font-bold text-red-600">Sirpam</span>
+                    </a>
+               </div>
+               <div class="flex items-center gap-4">
+                    <div class="flex gap-2">
+                         <button
+                              class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-9 px-4 bg-red-100 text-red-600 text-sm font-bold transition-all hover:bg-red-200">
+                              <span class="truncate">Preview</span>
+                         </button>
+                         <button
+                              class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-9 px-4 bg-red-600 text-white text-sm font-bold transition-all hover:bg-red-700 shadow-lg shadow-red-600/20">
+                              <span class="truncate">Publish</span>
+                         </button>
+                    </div>
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 h-8 ml-2 border-2 border-red-200"
+                         style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAO5rMU0slb6dHCE66lMrxp3g8zlcxt5Z-_wbDR9lfjIdarZJcEW29qUr0DdhiSIIhBSmIiAq6AnkGa7hL-BhpKro5WMC-nPy-eWuvyEILuVwnS8sDCI9G_O9Juqu2yuOc0fn5ABCDBTJ6_oC1WEQZb1z3m2Nwczx-D0y0zxefhMiApTKwCWCu2IXayqrOj0G1amu6kcZOj9-4LRvy9YP8bu9fK6e37-OYfc2WeOYgCinzgi2fDP6uw2b4eS127znN0igVepvnh1LM");'>
+                    </div>
+               </div>
+          </header>
+
+          <main class="flex flex-1 overflow-hidden">
+
+               <!-- Left Sidebar - Components & Layers -->
+               <aside class="w-80 border-r border-red-100 bg-white flex flex-col shrink-0">
+                    <!-- Tab Navigation -->
+                    <div class="flex border-b border-red-100 bg-red-50">
+                         <button
+                              class="tab-button flex-1 flex flex-col items-center justify-center border-b-[3px] border-b-red-600 py-3 active"
+                              data-tab="components">
+                              <p class="text-red-600 text-xs font-bold uppercase tracking-wider">Components</p>
+                         </button>
+                         <button
+                              class="tab-button flex-1 flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-gray-500 py-3 hover:bg-red-100 transition-colors"
+                              data-tab="layers">
+                              <p class="text-xs font-bold uppercase tracking-wider">Layers</p>
+                         </button>
+                    </div>
+
+                    <!-- Tab Content Area -->
+                    <div class="flex-1 overflow-y-auto">
+                         <!-- Components Tab -->
+                         <div id="components-tab" class="tab-content active h-full">
+                              <div class="flex flex-col h-full p-4">
+                                   <div class="mb-4">
+                                        <h3 class="text-sm font-bold mb-3">Components</h3>
+                                        <div class="relative">
+                                             <span
+                                                  class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+                                             <input
+                                                  class="w-full bg-red-50 border border-red-100 rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-red-500/30 focus:border-red-300 outline-none"
+                                                  placeholder="Search components..." />
+                                        </div>
+                                   </div>
+                                   <div class="flex-1 space-y-6 overflow-y-auto">
+                                        <!-- Basic Elements -->
+                                        <div>
+                                             <p
+                                                  class="text-[11px] font-bold text-gray-500 uppercase mb-3 tracking-widest">
+                                                  Basic Elements</p>
+                                             <div class="grid grid-cols-2 gap-2">
+                                                  <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 hover:shadow-sm transition-all group"
+                                                       draggable="true" data-component-type="text">
+                                                       <span
+                                                            class="material-symbols-outlined text-gray-500 group-hover:text-red-600">title</span>
+                                                       <span class="text-[11px] font-medium text-gray-500">Text</span>
+                                                  </div>
+                                                  <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 hover:shadow-sm transition-all group"
+                                                       draggable="true" data-component-type="image">
+                                                       <span
+                                                            class="material-symbols-outlined text-gray-500 group-hover:text-red-600">image</span>
+                                                       <span class="text-[11px] font-medium text-gray-500">Image</span>
+                                                  </div>
+                                                  <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 hover:shadow-sm transition-all group"
+                                                       draggable="true" data-component-type="icon">
+                                                       <span
+                                                            class="material-symbols-outlined text-gray-500 group-hover:text-red-600">star</span>
+                                                       <span class="text-[11px] font-medium text-gray-500">Icon</span>
+                                                  </div>
+                                                  <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 hover:shadow-sm transition-all group"
+                                                       draggable="true" data-component-type="link">
+                                                       <span
+                                                            class="material-symbols-outlined text-gray-500 group-hover:text-red-600">link</span>
+                                                       <span class="text-[11px] font-medium text-gray-500">Link</span>
+                                                  </div>
+                                                  <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 hover:shadow-sm transition-all group"
+                                                       draggable="true" data-component-type="video">
+                                                       <span
+                                                            class="material-symbols-outlined text-gray-500 group-hover:text-red-600">movie</span>
+                                                       <span class="text-[11px] font-medium text-gray-500">Video</span>
+                                                  </div>
+                                                  <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 hover:shadow-sm transition-all group"
+                                                       draggable="true" data-component-type="divider">
+                                                       <span
+                                                            class="material-symbols-outlined text-gray-500 group-hover:text-red-600">horizontal_rule</span>
+                                                       <span
+                                                            class="text-[11px] font-medium text-gray-500">Divider</span>
+                                                  </div>
+                                             </div>
+                                        </div>
+
+                                        <!-- Interactive -->
+                                        <div>
+                                             <p
+                                                  class="text-[11px] font-bold text-gray-500 uppercase mb-3 tracking-widest">
+                                                  Interactive</p>
+                                             <div class="grid grid-cols-1 gap-2">
+                                                  <div class="flex items-center gap-3 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 transition-all"
+                                                       draggable="true" data-component-type="form">
+                                                       <span
+                                                            class="material-symbols-outlined p-1.5 bg-orange-100 text-orange-600 rounded-lg">edit_square</span>
+                                                       <div>
+                                                            <p class="text-xs font-bold">Form</p>
+                                                            <p class="text-[10px] text-gray-500">Input, Select, Button
+                                                            </p>
+                                                       </div>
+                                                  </div>
+                                                  <div class="flex items-center gap-3 p-3 rounded-xl border border-red-100 bg-red-50 cursor-grab hover:border-red-300 transition-all"
+                                                       draggable="true" data-component-type="button">
+                                                       <span
+                                                            class="material-symbols-outlined p-1.5 bg-green-100 text-green-600 rounded-lg">smart_button</span>
+                                                       <div>
+                                                            <p class="text-xs font-bold">Buttons</p>
+                                                            <p class="text-[10px] text-gray-500">Text</p>
+                                                       </div>
+                                                  </div>
+                                                  <div class="flex items-center gap-3 p-3 rounded-xl border-2 border-red-600 bg-red-50 cursor-grab shadow-lg shadow-red-600/10"
+                                                       draggable="true" data-component-type="chart">
+                                                       <span
+                                                            class="material-symbols-outlined p-1.5 bg-red-600 text-white rounded-lg">bar_chart</span>
+                                                       <div>
+                                                            <p class="text-xs font-bold text-red-600">Bar Chart</p>
+                                                            <p class="text-[10px] text-red-400">Bar Data Visuals</p>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>
+
+                         <!-- Layers Tab -->
+                         <div id="layers-tab" class="tab-content h-full">
+                              <div class="flex flex-col h-full">
+                                   <div
+                                        class="px-4 py-3 border-b border-red-100 bg-white flex justify-between items-center">
+                                        <h3 class="text-sm font-bold">Layers</h3>
+                                        <span
+                                             class="material-symbols-outlined text-gray-400 text-sm cursor-pointer hover:text-red-600">filter_list</span>
+                                   </div>
+                                   <div class="flex-1 overflow-y-auto p-2">
+                                        <div class="space-y-0.5">
+                                             <div
+                                                  class="group flex items-center justify-between py-1.5 px-2 rounded hover:bg-red-50 cursor-pointer text-gray-900">
+                                                  <div class="flex items-center gap-2 overflow-hidden">
+                                                       <span
+                                                            class="material-symbols-outlined text-lg text-gray-400">arrow_drop_down</span>
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-400">web</span>
+                                                       <span class="text-xs font-medium truncate">Page</span>
+                                                  </div>
+                                                  <button
+                                                       class="text-gray-400 group-hover:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                       <span class="material-symbols-outlined text-sm">visibility</span>
+                                                  </button>
+                                             </div>
+                                             <div
+                                                  class="group flex items-center justify-between py-1.5 px-2 rounded hover:bg-red-50 cursor-pointer text-gray-900">
+                                                  <div class="flex items-center gap-2 pl-6 overflow-hidden">
+                                                       <span
+                                                            class="material-symbols-outlined text-lg text-gray-400">arrow_drop_down</span>
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-400">grid_view</span>
+                                                       <span class="text-xs font-medium truncate">Body</span>
+                                                  </div>
+                                                  <button
+                                                       class="text-gray-400 group-hover:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                       <span class="material-symbols-outlined text-sm">visibility</span>
+                                                  </button>
+                                             </div>
+                                             <div
+                                                  class="group flex items-center justify-between py-1.5 px-2 rounded hover:bg-red-50 cursor-pointer text-gray-900">
+                                                  <div class="flex items-center gap-2 pl-12 overflow-hidden">
+                                                       <span
+                                                            class="material-symbols-outlined text-lg text-gray-400">arrow_drop_down</span>
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-400">folder_open</span>
+                                                       <span class="text-xs font-medium truncate">Container</span>
+                                                  </div>
+                                                  <button
+                                                       class="text-gray-400 group-hover:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                       <span class="material-symbols-outlined text-sm">visibility</span>
+                                                  </button>
+                                             </div>
+                                             <div
+                                                  class="group flex items-center justify-between py-1.5 px-2 rounded bg-red-100 text-red-600 cursor-pointer border-l-2 border-red-600">
+                                                  <div class="flex items-center gap-2 pl-[4.5rem] overflow-hidden">
+                                                       <span class="w-[18px]"></span>
+                                                       <span class="material-symbols-outlined text-sm">bar_chart</span>
+                                                       <span class="text-xs font-bold truncate">Bar Chart</span>
+                                                  </div>
+                                                  <button
+                                                       class="text-red-600 opacity-100 hover:text-red-700 transition-opacity">
+                                                       <span class="material-symbols-outlined text-sm">visibility</span>
+                                                  </button>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </aside>
+
+               <!-- Main Canvas Area -->
+               <section class="flex-1 bg-red-50/50 p-8 relative overflow-auto" id="canvas-container">
+                    <div class="absolute inset-0 canvas-grid opacity-40 pointer-events-none"></div>
+
+                    <!-- Canvas Content -->
+                    <div id="canvas-content"
+                         class="relative z-10 mx-auto max-w-[1000px] min-h-[800px] bg-white rounded-xl shadow-2xl border border-red-100 p-10">
+                         <div class="flex justify-between items-center mb-8">
+                              <div>
+                                   <h1 class="text-2xl font-bold">Executive Dashboard</h1>
+                              </div>
+                         </div>
+                         <div class="grid grid-cols-3 gap-6 mb-8">
+                              <div class="h-32 bg-red-50 rounded-xl border border-red-100 p-4">
+                                   <p class="text-xs font-semibold text-gray-500">Total Revenue</p>
+                                   <p class="text-2xl font-bold mt-2">$42,800</p>
+                              </div>
+                              <div class="h-32 bg-red-50 rounded-xl border border-red-100 p-4">
+                                   <p class="text-xs font-semibold text-gray-500">Active Users</p>
+                                   <p class="text-2xl font-bold mt-2">1,284</p>
+                              </div>
+                              <div
+                                   class="h-32 border-2 border-red-600 bg-red-50 rounded-xl p-4 relative ring-4 ring-red-600/20">
+                                   <div
+                                        class="absolute -top-3 -left-1 px-2 py-0.5 bg-red-600 text-white text-[10px] font-bold rounded shadow-md">
+                                        bar_chart_1</div>
+                                   <div class="flex items-end justify-around h-full gap-1">
+                                        <div class="w-2 bg-red-600 rounded-t" style="height: 30%;"></div>
+                                        <div class="w-2 bg-red-600 rounded-t" style="height: 60%;"></div>
+                                        <div class="w-2 bg-red-600 rounded-t" style="height: 45%;"></div>
+                                        <div class="w-2 bg-red-600 rounded-t" style="height: 80%;"></div>
+                                        <div class="w-2 bg-red-600 rounded-t" style="height: 55%;"></div>
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </section>
+
+               <!-- Right Sidebar - Properties Panel -->
+               <aside class="w-96 border-l border-red-100 bg-white flex flex-col h-full">
+                    <!-- Tab Navigation -->
+                    <div class="flex border-b border-red-100 bg-red-50 shrink-0">
+                         <button
+                              class="tab-button flex-1 flex flex-col items-center justify-center border-b-[3px] border-b-red-600 py-3 active"
+                              data-tab="properties">
+                              <p class="text-red-600 text-xs font-bold uppercase tracking-wider">Properties</p>
+                         </button>
+                         <button
+                              class="tab-button flex-1 flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-gray-500 py-3 hover:bg-red-100 transition-colors"
+                              data-tab="style">
+                              <p class="text-xs font-bold uppercase tracking-wider">Style</p>
+                         </button>
+                         <button
+                              class="tab-button flex-1 flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-gray-500 py-3 hover:bg-red-100 transition-colors"
+                              data-tab="resources">
+                              <p class="text-xs font-bold uppercase tracking-wider">Resources</p>
+                         </button>
+                    </div>
+
+                    <!-- Tab Content Area -->
+                    <div class="flex-1 overflow-y-auto">
+                         <!-- Properties Tab Content -->
+                         <div id="properties-tab" class="tab-content active">
+                              <!-- General Section -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">settings</span>
+                                             <span>General</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_more</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Element
+                                                  ID</label>
+                                             <div class="flex items-center gap-2">
+                                                  <input
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-sm h-8 px-2 font-mono text-xs focus:ring-2 focus:ring-red-500/30 focus:border-red-300 outline-none"
+                                                       type="text" value="bar_chart_1" />
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Chart
+                                                  Type</label>
+                                             <select
+                                                  class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5 focus:ring-2 focus:ring-red-500/30 focus:border-red-300 outline-none">
+                                                  <option selected>Bar</option>
+                                                  <option>Line</option>
+                                                  <option>Pie</option>
+                                                  <option>Doughnut</option>
+                                             </select>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Events Section -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span class="material-symbols-outlined text-lg text-red-600">bolt</span>
+                                             <span>Events</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_more</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div class="custom-dropdown" id="action-dropdown">
+                                             <button
+                                                  class="w-full flex items-center justify-between p-3 bg-red-50 border border-red-100 rounded-lg hover:border-red-300 transition-colors"
+                                                  onclick="toggleDropdown('action-dropdown')">
+                                                  <div class="flex flex-col items-start">
+                                                       <span class="text-xs font-bold">On Click Action</span>
+                                                  </div>
+                                                  <span class="material-symbols-outlined text-sm">arrow_drop_down</span>
+                                             </button>
+                                             <div class="custom-dropdown-menu mt-1">
+                                                  <div class="p-2 space-y-1">
+                                                       <button
+                                                            class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 rounded flex items-center gap-2">
+                                                            <span
+                                                                 class="material-symbols-outlined text-sm">open_in_new</span>
+                                                            <span>Navigation Actions</span>
+                                                       </button>
+                                                       <button
+                                                            class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 rounded flex items-center gap-2">
+                                                            <span
+                                                                 class="material-symbols-outlined text-sm">play_arrow</span>
+                                                            <span>Visibility Actions</span>
+                                                       </button>
+                                                       <button
+                                                            class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 rounded flex items-center gap-2">
+                                                            <span
+                                                                 class="material-symbols-outlined text-sm">refresh</span>
+                                                            <span>Style & Layout Actions</span>
+                                                       </button>
+                                                       <button
+                                                            class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 rounded flex items-center gap-2">
+                                                            <span
+                                                                 class="material-symbols-outlined text-sm">filter_alt</span>
+                                                            <span>Content Actions</span>
+                                                       </button>
+                                                       <button
+                                                            class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 rounded flex items-center gap-2">
+                                                            <span
+                                                                 class="material-symbols-outlined text-sm">animation</span>
+                                                            <span>Animation Actions</span>
+                                                       </button>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>
+
+                         <!-- Style Tab Content -->
+                         <div id="style-tab" class="tab-content">
+                              <!-- Layout Section -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">dashboard</span>
+                                             <span>Layout</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div class="grid grid-cols-2 gap-4">
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Display</label>
+                                                  <select
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5 focus:ring-2 focus:ring-red-500/30 outline-none">
+                                                       <option selected>Block</option>
+                                                       <option>Flex</option>
+                                                       <option>Grid</option>
+                                                       <option>Inline</option>
+                                                       <option>Inline-block</option>
+                                                       <option>None</option>
+                                                  </select>
+                                             </div>
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Position</label>
+                                                  <select
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5 focus:ring-2 focus:ring-red-500/30 outline-none">
+                                                       <option selected>Static</option>
+                                                       <option>Relative</option>
+                                                       <option>Absolute</option>
+                                                       <option>Fixed</option>
+                                                       <option>Sticky</option>
+                                                  </select>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Width</label>
+                                             <div class="flex items-center gap-2">
+                                                  <input
+                                                       class="flex-1 bg-red-50 border border-red-100 rounded text-sm h-8 px-2 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                       type="text" value="100%" />
+                                                  <select
+                                                       class="w-20 bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                       <option>px</option>
+                                                       <option selected>%</option>
+                                                       <option>rem</option>
+                                                       <option>em</option>
+                                                       <option>vw</option>
+                                                  </select>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Height</label>
+                                             <div class="flex items-center gap-2">
+                                                  <input
+                                                       class="flex-1 bg-red-50 border border-red-100 rounded text-sm h-8 px-2 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                       type="text" value="auto" />
+                                                  <select
+                                                       class="w-20 bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                       <option>px</option>
+                                                       <option>%</option>
+                                                       <option>rem</option>
+                                                       <option>em</option>
+                                                       <option selected>auto</option>
+                                                  </select>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Flex Layout -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">view_column</span>
+                                             <span>Flex Layout</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Direction</label>
+                                             <div class="grid grid-cols-4 gap-1 bg-red-50 p-1 rounded-lg">
+                                                  <button
+                                                       class="flex items-center justify-center py-1.5 bg-white rounded shadow-sm"
+                                                       title="Row">
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-red-600">east</span>
+                                                  </button>
+                                                  <button
+                                                       class="flex items-center justify-center py-1.5 text-gray-400 hover:bg-white hover:text-red-600 rounded transition-colors"
+                                                       title="Row Reverse">
+                                                       <span class="material-symbols-outlined text-sm">west</span>
+                                                  </button>
+                                                  <button
+                                                       class="flex items-center justify-center py-1.5 text-gray-400 hover:bg-white hover:text-red-600 rounded transition-colors"
+                                                       title="Column">
+                                                       <span class="material-symbols-outlined text-sm">south</span>
+                                                  </button>
+                                                  <button
+                                                       class="flex items-center justify-center py-1.5 text-gray-400 hover:bg-white hover:text-red-600 rounded transition-colors"
+                                                       title="Column Reverse">
+                                                       <span class="material-symbols-outlined text-sm">north</span>
+                                                  </button>
+                                             </div>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Justify
+                                                       Content</label>
+                                                  <select
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                       <option>flex-start</option>
+                                                       <option>center</option>
+                                                       <option selected>space-between</option>
+                                                       <option>space-around</option>
+                                                       <option>space-evenly</option>
+                                                       <option>flex-end</option>
+                                                  </select>
+                                             </div>
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Align
+                                                       Items</label>
+                                                  <select
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                       <option>stretch</option>
+                                                       <option selected>center</option>
+                                                       <option>flex-start</option>
+                                                       <option>flex-end</option>
+                                                       <option>baseline</option>
+                                                  </select>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Gap</label>
+                                             <div class="flex items-center gap-3">
+                                                  <input
+                                                       class="flex-1 h-1 bg-red-100 rounded-lg appearance-none cursor-pointer"
+                                                       type="range" min="0" max="48" value="16" />
+                                                  <span class="text-[10px] font-bold w-8 text-right">16px</span>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Spacing -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">space_bar</span>
+                                             <span>Spacing</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Padding</label>
+                                             <div class="grid grid-cols-4 gap-2">
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Top</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="16" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Right</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="16" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Bottom</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="16" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Left</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="16" />
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Margin</label>
+                                             <div class="grid grid-cols-4 gap-2">
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Top</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="0" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Right</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="auto" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Bottom</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="0" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Left</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="auto" />
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Background -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">format_paint</span>
+                                             <span>Background</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Background
+                                                  Color</label>
+                                             <div class="flex items-center gap-2">
+                                                  <div class="color-preview bg-red-600"></div>
+                                                  <input
+                                                       class="flex-1 bg-red-50 border border-red-100 rounded text-sm h-8 px-2 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                       type="text" value="#DC2626" />
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Opacity</label>
+                                             <div class="flex items-center gap-3">
+                                                  <input
+                                                       class="flex-1 h-1 bg-red-100 rounded-lg appearance-none cursor-pointer"
+                                                       type="range" min="0" max="100" value="100" />
+                                                  <span class="text-[10px] font-bold w-8 text-right">100%</span>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Background
+                                                  Image</label>
+                                             <div class="flex items-center gap-2">
+                                                  <input
+                                                       class="flex-1 bg-red-50 border border-red-100 rounded text-sm h-8 px-2 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                       type="text" placeholder="url(...)" />
+                                                  <button
+                                                       class="text-xs px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors">Browse</button>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Border -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">border_all</span>
+                                             <span>Border</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div class="grid grid-cols-3 items-center justify-center gap-3">
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Width</label>
+                                                  <input
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-sm px-2 py-1.5 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                       type="text" value="1px" />
+                                             </div>
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Style</label>
+                                                  <select
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                       <option selected>solid</option>
+                                                       <option>dashed</option>
+                                                       <option>dotted</option>
+                                                       <option>double</option>
+                                                       <option>none</option>
+                                                  </select>
+                                             </div>
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Color</label>
+                                                  <div class="flex items-center gap-2">
+                                                       <input
+                                                            class="w-[90px] bg-red-50 border border-red-100 rounded text-xs px-2 py-1 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="#FEE2E2" />
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Border
+                                                  Radius</label>
+                                             <div class="grid grid-cols-4 gap-2">
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Top
+                                                            Left</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="12" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Top
+                                                            Right</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="12" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Bottom
+                                                            Right</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="12" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Bottom
+                                                            Left</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="12" />
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Typography -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">text_fields</span>
+                                             <span>Typography</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div class="grid grid-cols-2 gap-3">
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Font
+                                                       Size</label>
+                                                  <div class="flex items-center gap-2">
+                                                       <input
+                                                            class="flex-1 bg-red-50 border border-red-100 rounded text-sm px-2 py-1.5 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="14" />
+                                                       <select
+                                                            class="w-16 bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                            <option selected>px</option>
+                                                            <option>rem</option>
+                                                            <option>em</option>
+                                                            <option>%</option>
+                                                       </select>
+                                                  </div>
+                                             </div>
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Font
+                                                       Weight</label>
+                                                  <select
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                       <option>100</option>
+                                                       <option>300</option>
+                                                       <option selected>400</option>
+                                                       <option>500</option>
+                                                       <option>600</option>
+                                                       <option>700</option>
+                                                       <option>900</option>
+                                                  </select>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Text
+                                                  Color</label>
+                                             <div class="flex items-center gap-2">
+                                                  <div class="color-preview bg-gray-900"></div>
+                                                  <input
+                                                       class="flex-1 bg-red-50 border border-red-100 rounded text-sm h-8 px-2 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                       type="text" value="#111827" />
+                                             </div>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Text
+                                                       Align</label>
+                                                  <select
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                       <option selected>left</option>
+                                                       <option>center</option>
+                                                       <option>right</option>
+                                                       <option>justify</option>
+                                                  </select>
+                                             </div>
+                                             <div>
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Line
+                                                       Height</label>
+                                                  <input
+                                                       class="w-full bg-red-50 border border-red-100 rounded text-sm px-2 py-1.5 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                       type="text" value="1.5" />
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Effects -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span class="material-symbols-outlined text-lg text-red-600">blur_on</span>
+                                             <span>Effects</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Box
+                                                  Shadow</label>
+                                             <div class="grid grid-cols-4 gap-2">
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">X</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="0" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Y</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="4" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Blur</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="12" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Spread</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="0" />
+                                                  </div>
+                                             </div>
+                                             <div class="mt-2">
+                                                  <label
+                                                       class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Shadow
+                                                       Color</label>
+                                                  <div class="flex items-center gap-2">
+                                                       <div class="color-preview bg-red-600/20"></div>
+                                                       <input
+                                                            class="flex-1 bg-red-50 border border-red-100 rounded text-sm h-8 px-2 focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="rgba(220,38,38,0.1)" />
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Transform</label>
+                                             <div class="grid grid-cols-3 gap-2">
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Rotate</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="0deg" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Scale</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="1" />
+                                                  </div>
+                                                  <div>
+                                                       <label
+                                                            class="text-[9px] text-gray-400 block text-center mb-1">Opacity</label>
+                                                       <input
+                                                            class="w-full bg-red-50 border border-red-100 rounded text-xs px-2 py-1 text-center focus:ring-2 focus:ring-red-500/30 outline-none"
+                                                            type="text" value="1" />
+                                                  </div>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>
+
+                         <!-- Resources Tab Content -->
+                         <div id="resources-tab" class="tab-content">
+                              <!-- Data Binding -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-600">database</span>
+                                             <span>Data Binding</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Data
+                                                  Source</label>
+                                             <div class="flex items-center gap-2">
+                                                  <div
+                                                       class="w-full flex items-center justify-between bg-red-50 border border-red-100 rounded p-2 cursor-pointer hover:border-red-300 transition-colors">
+                                                       <div class="flex items-center gap-2">
+                                                            <span
+                                                                 class="material-symbols-outlined text-sm text-green-500">api</span>
+                                                            <span class="text-xs font-medium">PostgreSQL_Main</span>
+                                                       </div>
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-400">edit</span>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Query</label>
+                                             <div class="relative">
+                                                  <textarea
+                                                       class="w-full bg-gray-900 text-green-400 font-mono text-[10px] rounded p-2 border border-gray-700 h-20 resize-none focus:ring-2 focus:ring-red-500/30 outline-none">SELECT revenue, month FROM sales_2024 LIMIT 10</textarea>
+                                                  <span
+                                                       class="absolute bottom-2 right-2 text-[8px] text-gray-500">SQL</span>
+                                             </div>
+                                        </div>
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Refresh
+                                                  Interval</label>
+                                             <select
+                                                  class="w-full bg-red-50 border border-red-100 rounded text-xs py-1.5">
+                                                  <option>Manual</option>
+                                                  <option selected>Every 30 seconds</option>
+                                                  <option>Every minute</option>
+                                                  <option>Every 5 minutes</option>
+                                                  <option>Every hour</option>
+                                             </select>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- API Connections -->
+                              <div class="border-b border-red-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-red-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span class="material-symbols-outlined text-lg text-red-600">link</span>
+                                             <span>API Connections</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-3">
+                                        <div
+                                             class="flex items-center justify-between p-2.5 rounded-lg bg-red-50 border border-red-100 group hover:border-red-300 transition-all">
+                                             <div class="flex items-center gap-3">
+                                                  <div
+                                                       class="w-8 h-8 rounded bg-white shadow-sm flex items-center justify-center text-blue-600">
+                                                       <span class="material-symbols-outlined">cloud</span>
+                                                  </div>
+                                                  <div>
+                                                       <p class="text-xs font-bold">User API</p>
+                                                       <p class="text-[10px] text-gray-500">https://api.users.com</p>
+                                                  </div>
+                                             </div>
+                                             <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                                        </div>
+                                        <button
+                                             class="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-red-600 border border-red-200 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                                             <span class="material-symbols-outlined text-sm">add_link</span>
+                                             Add New API
+                                        </button>
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+
+                    <!-- Delete Button -->
+                    <div class="shrink-0 p-4 bg-red-50 border-t border-red-100">
+                         <button
+                              class="w-full py-2 border border-red-300 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100 transition-colors">
+                              Delete bar_chart_1
+                         </button>
+                    </div>
+               </aside>
+          </main>
+     </div>
+
+     <script>
+          document.addEventListener('DOMContentLoaded', function () {
+               const container = document.getElementById('canvas-container');
+               const content = document.getElementById('canvas-content');
+               let scale = 1;
+
+               // Mouse wheel zoom (with Ctrl/Cmd)
+               container.addEventListener('wheel', function (e) {
+                    if (e.ctrlKey || e.metaKey) {
+                         e.preventDefault();
+                         const rect = container.getBoundingClientRect();
+                         const mouseX = e.clientX - rect.left;
+                         const mouseY = e.clientY - rect.top;
+                         const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                         const newScale = Math.min(3, Math.max(0.2, scale * delta));
+                         applyZoom(newScale, mouseX, mouseY);
+                    }
+               }, { passive: false });
+
+               function applyZoom(newScale, originX, originY) {
+                    const oldScale = scale;
+                    scale = newScale;
+                    const scrollLeft = container.scrollLeft;
+                    const scrollTop = container.scrollTop;
+                    const adjustedX = originX + scrollLeft;
+                    const adjustedY = originY + scrollTop;
+                    const newScrollLeft = adjustedX * (newScale / oldScale) - originX;
+                    const newScrollTop = adjustedY * (newScale / oldScale) - originY;
+                    content.style.transform = `scale(${scale})`;
+                    content.style.transformOrigin = '0 0';
+                    container.scrollLeft = newScrollLeft;
+                    container.scrollTop = newScrollTop;
+               }
+
+               // Drag and Drop
+               document.querySelectorAll('[draggable="true"]').forEach(item => {
+                    item.addEventListener('dragstart', (e) => {
+                         e.dataTransfer.setData('text/plain', e.target.getAttribute('data-component-type'));
+                         e.dataTransfer.effectAllowed = 'copy';
+                    });
+               });
+
+               content.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'copy';
+               });
+
+               content.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const type = e.dataTransfer.getData('text/plain');
+                    if (!type) return;
+                    const rect = content.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const el = document.createElement('div');
+                    el.className = 'absolute cursor-move shadow-md border rounded p-2 bg-white border-red-200 z-10';
+                    el.style.left = `${x}px`;
+                    el.style.top = `${y}px`;
+                    el.style.pointerEvents = 'auto';
+                    switch (type) {
+                         case 'text':
+                              el.innerHTML = '<span class="text-sm font-medium">New Text</span>';
+                              break;
+                         case 'image':
+                              el.innerHTML = '<div class="w-12 h-12 bg-red-100 rounded flex items-center justify-center"><span class="material-symbols-outlined text-red-400">image</span></div>';
+                              break;
+                         case 'icon':
+                              el.innerHTML = '<span class="material-symbols-outlined text-2xl text-red-600">star</span>';
+                              break;
+                         case 'link':
+                              el.innerHTML = '<a href="#" class="text-red-600 underline text-sm">New Link</a>';
+                              break;
+                         case 'video':
+                              el.innerHTML = '<div class="w-16 h-16 bg-gray-900 rounded flex items-center justify-center"><span class="material-symbols-outlined text-white">play_circle</span></div>';
+                              break;
+                         case 'divider':
+                              el.innerHTML = '<hr class="w-24 border-t border-red-300" />';
+                              break;
+                         case 'form':
+                              el.innerHTML = '<input type="text" placeholder="Form Input" class="text-xs border border-red-200 rounded px-2 py-1 w-full focus:ring-2 focus:ring-red-500/30 outline-none" />';
+                              break;
+                         case 'button':
+                              el.innerHTML = '<button class="bg-red-600 text-white text-xs px-3 py-1 rounded hover:bg-red-700">Button</button>';
+                              break;
+                         case 'chart':
+                              el.innerHTML = '<div class="text-xs text-red-600 flex items-center gap-1"><span class="material-symbols-outlined text-sm">bar_chart</span> Bar Chart</div>';
+                              break;
+                         default:
+                              el.textContent = 'Component';
+                    }
+                    content.appendChild(el);
+               });
+
+               // Tab Logic - Right Sidebar
+               const rightTabButtons = document.querySelectorAll('aside.w-96.border-l .tab-button');
+               const rightTabContents = document.querySelectorAll('aside.w-96.border-l .tab-content');
+
+               rightTabButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                         const tabId = this.getAttribute('data-tab');
+                         rightTabButtons.forEach(btn => {
+                              btn.classList.remove('active', 'border-b-red-600');
+                              btn.classList.add('border-b-transparent');
+                              btn.querySelector('p').classList.remove('text-red-600');
+                              btn.querySelector('p').classList.add('text-gray-500');
+                         });
+                         this.classList.add('active', 'border-b-red-600');
+                         this.querySelector('p').classList.add('text-red-600');
+                         this.querySelector('p').classList.remove('text-gray-500');
+                         rightTabContents.forEach(content => content.classList.remove('active'));
+                         document.getElementById(`${tabId}-tab`)?.classList.add('active');
+                    });
+               });
+
+               // Tab Logic - Left Sidebar
+               const leftTabButtons = document.querySelectorAll('aside.w-80.border-r .tab-button');
+               const leftTabContents = document.querySelectorAll('aside.w-80.border-r .tab-content');
+
+               leftTabButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                         const tabId = this.getAttribute('data-tab');
+                         leftTabButtons.forEach(btn => {
+                              btn.classList.remove('active', 'border-b-red-600');
+                              btn.classList.add('border-b-transparent');
+                              btn.querySelector('p').classList.remove('text-red-600');
+                              btn.querySelector('p').classList.add('text-gray-500');
+                         });
+                         this.classList.add('active', 'border-b-red-600');
+                         this.querySelector('p').classList.add('text-red-600');
+                         this.querySelector('p').classList.remove('text-gray-500');
+                         leftTabContents.forEach(content => content.classList.remove('active'));
+                         document.getElementById(`${tabId}-tab`)?.classList.add('active');
+                    });
+               });
+
+               // Range slider value display
+               document.querySelectorAll('input[type="range"]').forEach(slider => {
+                    const valueSpan = slider.nextElementSibling;
+                    if (valueSpan?.tagName === 'SPAN') {
+                         slider.addEventListener('input', () => {
+                              valueSpan.textContent = slider.value + (slider.min === '0' && slider.max === '100' ? '%' : 'px');
+                         });
+                    }
+               });
+          });
+
+          function toggleSection(button) {
+               const content = button.nextElementSibling;
+               const icon = button.querySelector('.material-symbols-outlined:last-child');
+               if (content) {
+                    content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                    icon.textContent = content.style.display === 'block' ? 'expand_less' : 'expand_more';
+               }
+          }
+
+          function toggleDropdown(id) {
+               const el = document.getElementById(id);
+               el?.classList.toggle('open');
+          }
+
+          document.addEventListener('click', (e) => {
+               if (!e.target.closest('.custom-dropdown')) {
+                    document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('open'));
+               }
+          });
+
+          document.querySelectorAll('.color-preview').forEach(preview => {
+               preview.addEventListener('click', () => {
+                    const input = preview.nextElementSibling;
+                    if (input?.tagName === 'INPUT') input.focus();
+               });
+          });
+     </script>
+</body>
+
+</html>

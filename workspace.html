@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>My Workspace - Sirpam</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0..200&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'opsz' 24;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #fef2f2;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #fca5a5;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f87171;
+    }
+
+    /* Nav link underline animation */
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #dc2626;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* Hover lift effect */
+    .hover-lift {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -15px rgba(220, 38, 38, 0.25);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      0% {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .animate-slide-up {
+      animation: slideUp 0.3s ease-out forwards;
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body class="bg-red-50 text-gray-900 min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 border-b border-red-100 bg-white/90 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="./index.html" class="flex items-center gap-2 cursor-pointer group">
+        <div class="w-10 h-10 text-red-600 transition-transform duration-300 group-hover:scale-110">
+          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor"
+              fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold tracking-tight text-red-600">Sirpam</h2>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors" href="#">Features</a>
+        <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors" href="#">Docs</a>
+        <a class="relative text-sm font-medium text-red-600 transition-colors" href="./workspace.html">Workspace</a>
+        <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors" href="#">Templates</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="locateToLogin()"
+          class="hidden sm:flex min-w-20 cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-red-100 text-red-600 text-sm font-bold transition-all hover:bg-red-200">
+          Login
+        </button>
+        <button onclick="locateToSignUp()"
+          class="flex min-w-28 cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-red-600 text-white text-sm font-bold shadow-lg shadow-red-600/30 hover:bg-red-700 hover:shadow-red-600/50 transition-all">
+          Get Started
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-16">
+    <div class="mx-auto px-6 py-8">
+
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-black text-gray-900 mb-2">My Workspace</h1>
+        <p class="text-gray-600">Manage and create your applications</p>
+      </div>
+
+      <!-- App Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+        <!-- Create New App Card -->
+        <button onclick="locateToCanvas()"
+          class="group flex flex-col items-center justify-center p-8 bg-white border-2 border-dashed border-red-200 rounded-2xl hover:border-red-400 hover-lift transition-all duration-300 animate-fade-in">
+          <div
+            class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-200 transition-all duration-300">
+            <span class="material-symbols-outlined text-4xl">add</span>
+          </div>
+          <span class="mt-5 font-bold text-lg text-gray-900">Create New App</span>
+          <span class="text-sm text-gray-500 mt-1">Start from scratch</span>
+          <div class="mt-4 text-xs text-red-600 font-medium px-3 py-1 rounded-full bg-red-100">
+            Get Started
+          </div>
+        </button>
+
+        <!-- Card 1: Published - Inventory Manager -->
+        <div
+          class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 animate-slide-up"
+          style="animation-delay: 0.05s">
+          <div class="flex flex-col h-full">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-600">
+                  <span class="material-symbols-outlined">inventory_2</span>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg text-gray-900">Inventory Manager</h3>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700">
+                      Published
+                    </span>
+                    <span class="text-xs text-gray-500">• 2 hours ago</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
+                  <span class="material-symbols-outlined text-gray-500">more_vert</span>
+                </button>
+
+                <div
+                  class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in">
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">edit</span>
+                    Edit
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">content_copy</span>
+                    Duplicate
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
+                    <span class="material-symbols-outlined text-base">delete</span>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-5 flex-1">
+              Track and manage your inventory levels, orders, and sales across multiple locations.
+            </p>
+
+            <div class="flex items-center justify-between pt-4 border-t border-red-100">
+              <div class="flex items-center gap-1 text-xs text-gray-500">
+                <span class="material-symbols-outlined text-sm">visibility</span>
+                <span>1.2k views</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Unpublished - Customer Support Portal -->
+        <div
+          class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 animate-slide-up"
+          style="animation-delay: 0.1s">
+          <div class="flex flex-col h-full">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
+                  <span class="material-symbols-outlined">support_agent</span>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg text-gray-900">Customer Support Portal</h3>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                      Unpublished
+                    </span>
+                    <span class="text-xs text-gray-500">• Yesterday</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
+                  <span class="material-symbols-outlined text-gray-500">more_vert</span>
+                </button>
+
+                <div
+                  class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in">
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">edit</span>
+                    Edit
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">content_copy</span>
+                    Duplicate
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">publish</span>
+                    Publish
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
+                    <span class="material-symbols-outlined text-base">delete</span>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-5 flex-1">
+              A centralized platform for managing customer inquiries, tickets, and support requests.
+            </p>
+
+            <div class="flex items-center justify-between pt-4 border-t border-red-100">
+              <div class="flex items-center gap-1 text-xs text-gray-500">
+                <span class="material-symbols-outlined text-sm">edit</span>
+                <span>In Draft</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Published - Analytics Dashboard -->
+        <div
+          class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 animate-slide-up"
+          style="animation-delay: 0.15s">
+          <div class="flex flex-col h-full">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600">
+                  <span class="material-symbols-outlined">analytics</span>
+                </div>
+                <div>
+                  <h3 class="font-bold text-lg text-gray-900">Analytics Dashboard</h3>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700">
+                      Published
+                    </span>
+                    <span class="text-xs text-gray-500">• 3 days ago</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative">
+                <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
+                  <span class="material-symbols-outlined text-gray-500">more_vert</span>
+                </button>
+
+                <div
+                  class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in">
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">edit</span>
+                    Edit
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">content_copy</span>
+                    Duplicate
+                  </button>
+                  <button
+                    class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
+                    <span class="material-symbols-outlined text-base">delete</span>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-5 flex-1">
+              Visualize and analyze your business data with interactive charts and reports.
+            </p>
+
+            <div class="flex items-center justify-between pt-4 border-t border-red-100">
+              <div class="flex items-center gap-1 text-xs text-gray-500">
+                <span class="material-symbols-outlined text-sm">visibility</span>
+                <span>3.5k views</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Workspace Overview Section -->
+      <div class="mt-12 relative rounded-3xl overflow-hidden bg-red-600">
+        <!-- Pattern -->
+        <div class="absolute inset-0 opacity-10"
+          style="background-image: radial-gradient(white 2px, transparent 2px); background-size: 24px 24px;">
+        </div>
+
+        <!-- Decorative Circles -->
+        <div class="absolute top-6 left-6 w-16 h-16 rounded-full bg-white/10"></div>
+        <div class="absolute bottom-6 right-10 w-24 h-24 rounded-full bg-white/10"></div>
+
+        <div class="relative z-10 p-8">
+          <h3 class="font-bold text-xl text-white mb-6">Workspace Overview</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
+              <div class="text-sm text-white/80">Total Apps</div>
+              <div class="text-3xl font-bold text-white mt-1">3</div>
+            </div>
+            <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
+              <div class="text-sm text-white/80">Published</div>
+              <div class="text-3xl font-bold text-white mt-1">2</div>
+            </div>
+            <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
+              <div class="text-sm text-white/80">In Draft</div>
+              <div class="text-3xl font-bold text-white mt-1">1</div>
+            </div>
+            <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
+              <div class="text-sm text-white/80">Storage Used</div>
+              <div class="text-3xl font-bold text-white mt-1">1.0 GB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Toggle dropdown menu
+    function toggleMenu(btn) {
+      const allMenus = document.querySelectorAll('.dropdown-menu');
+      const currentMenu = btn.nextElementSibling;
+
+      allMenus.forEach(menu => {
+        if (menu !== currentMenu) {
+          menu.classList.add('hidden');
+        }
+      });
+
+      currentMenu.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.relative')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+          menu.classList.add('hidden');
+        });
+      }
+    });
+
+    // Trigger slide-up animations on load
+    document.addEventListener('DOMContentLoaded', function () {
+      const cards = document.querySelectorAll('.animate-slide-up');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '1';
+        }, index * 50);
+      });
+    });
+
+    // Navigation functions
+    function locateToCanvas() {
+      window.location.href = "/canvas.html";
+    }
+
+    function locateToLogin() {
+      window.location.href = "/login.html";
+    }
+
+    function locateToSignUp() {
+      window.location.href = "/signup.html";
+    }
+  </script>
+
+</body>
+
+</html>
