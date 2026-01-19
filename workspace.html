@@ -21,6 +21,10 @@
       font-variation-settings: 'FILL' 0, 'wght' 400, 'opsz' 24;
     }
 
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'opsz' 24;
+    }
+
     /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
@@ -90,6 +94,18 @@
       }
     }
 
+    @keyframes scaleIn {
+      0% {
+        transform: scale(0.95);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
     .animate-fade-in {
       animation: fadeIn 0.3s ease-in-out;
     }
@@ -97,6 +113,43 @@
     .animate-slide-up {
       animation: slideUp 0.3s ease-out forwards;
       opacity: 0;
+    }
+
+    .animate-scale-in {
+      animation: scaleIn 0.2s ease-out;
+    }
+
+    /* Modal backdrop */
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    /* Folder icon gradient */
+    .folder-icon-gradient {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    }
+
+    /* Page icon */
+    .page-icon-gradient {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    }
+
+    /* View transition */
+    .view-container {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .view-hidden {
+      opacity: 0;
+      transform: translateX(-20px);
+      pointer-events: none;
+      position: absolute;
+    }
+
+    .view-visible {
+      opacity: 1;
+      transform: translateX(0);
     }
   </style>
 </head>
@@ -122,11 +175,11 @@
         <a class="nav-link relative text-sm font-medium hover:text-red-600 transition-colors" href="#">Templates</a>
       </div>
       <div class="flex items-center gap-3">
-        <button onclick="locateToLogin()"
+        <button
           class="hidden sm:flex min-w-20 cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-red-100 text-red-600 text-sm font-bold transition-all hover:bg-red-200">
           Login
         </button>
-        <button onclick="locateToSignUp()"
+        <button
           class="flex min-w-28 cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-red-600 text-white text-sm font-bold shadow-lg shadow-red-600/30 hover:bg-red-700 hover:shadow-red-600/50 transition-all">
           Get Started
         </button>
@@ -138,224 +191,279 @@
   <main class="pt-16">
     <div class="mx-auto px-6 py-8">
 
-      <!-- Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl md:text-4xl font-black text-gray-900 mb-2">My Workspace</h1>
-        <p class="text-gray-600">Manage and create your applications</p>
+      <!-- Breadcrumb Navigation -->
+      <div id="breadcrumb" class="mb-6 flex items-center gap-2 text-sm">
+        <button onclick="navigateToFolders()"
+          class="flex items-center gap-1 text-gray-600 hover:text-red-600 transition-colors">
+          <span class="material-symbols-outlined text-lg">home</span>
+          <span>My Workspace</span>
+        </button>
+        <span id="breadcrumb-separator" class="text-gray-400 hidden">/</span>
+        <span id="breadcrumb-folder" class="font-semibold text-gray-900 hidden"></span>
       </div>
 
-      <!-- App Cards Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Header -->
+      <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 id="page-title" class="text-3xl md:text-4xl font-black text-gray-900 mb-2">My Workspace</h1>
+          <p id="page-description" class="text-gray-600">Organize your projects into folders</p>
+        </div>
 
-        <!-- Create New App Card -->
-        <button onclick="locateToCanvas()"
-          class="group flex flex-col items-center justify-center p-8 bg-white border-2 border-dashed border-red-200 rounded-2xl hover:border-red-400 hover-lift transition-all duration-300 animate-fade-in">
-          <div
-            class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-200 transition-all duration-300">
-            <span class="material-symbols-outlined text-4xl">add</span>
+        <!-- Search and Filter -->
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+            <input type="text" placeholder="Search..."
+              class="pl-10 pr-4 py-2.5 w-64 bg-white border border-red-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
           </div>
-          <span class="mt-5 font-bold text-lg text-gray-900">Create New App</span>
-          <span class="text-sm text-gray-500 mt-1">Start from scratch</span>
-          <div class="mt-4 text-xs text-red-600 font-medium px-3 py-1 rounded-full bg-red-100">
-            Get Started
+          <button class="p-2.5 bg-white border border-red-100 rounded-xl hover:bg-red-50 transition-colors">
+            <span class="material-symbols-outlined text-gray-600">filter_list</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Folders View -->
+      <div id="folders-view" class="view-container view-visible">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="folders-grid">
+
+          <!-- Create New Folder Card -->
+          <button onclick="openCreateFolderModal()"
+            class="group flex flex-col items-center justify-center p-8 bg-white border-2 border-dashed border-red-200 rounded-2xl hover:border-red-400 hover-lift transition-all duration-300 min-h-[200px]">
+            <div
+              class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-200 transition-all duration-300">
+              <span class="material-symbols-outlined text-4xl">create_new_folder</span>
+            </div>
+            <span class="mt-5 font-bold text-lg text-gray-900">Create New Folder</span>
+            <span class="text-sm text-gray-500 mt-1">Organize your projects</span>
+          </button>
+
+          <!-- Folder 1: E-commerce Platform -->
+          <div onclick="openFolder('ecommerce', 'E-commerce Platform')"
+            class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 cursor-pointer animate-slide-up min-h-[200px]"
+            style="animation-delay: 0.05s">
+            <div class="flex flex-col h-full">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-14 h-14 rounded-xl folder-icon-gradient flex items-center justify-center text-white shadow-lg shadow-amber-500/30">
+                    <span class="material-symbols-outlined filled text-3xl">folder</span>
+                  </div>
+                </div>
+                <div class="relative" onclick="event.stopPropagation()">
+                  <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
+                    <span class="material-symbols-outlined text-gray-500">more_vert</span>
+                  </button>
+                  <div
+                    class="dropdown-menu hidden absolute right-0 mt-1 w-44 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden">
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">edit</span>
+                      Rename
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">palette</span>
+                      Change Color
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">content_copy</span>
+                      Duplicate
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
+                      <span class="material-symbols-outlined text-base">delete</span>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex-1">
+                <h3 class="font-bold text-lg text-gray-900 mb-1">E-commerce Platform</h3>
+                <p class="text-sm text-gray-500 mb-4">Online store management system</p>
+              </div>
+
+              <div class="flex items-center justify-between pt-4 border-t border-red-100">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <span class="material-symbols-outlined text-sm">description</span>
+                    <span>4 pages</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <span class="material-symbols-outlined text-sm">schedule</span>
+                    <span>2h ago</span>
+                  </div>
+                </div>
+                <span
+                  class="material-symbols-outlined text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+              </div>
+            </div>
           </div>
+
+          <!-- Folder 2: Analytics Dashboard -->
+          <div onclick="openFolder('analytics', 'Analytics Dashboard')"
+            class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 cursor-pointer animate-slide-up min-h-[200px]"
+            style="animation-delay: 0.1s">
+            <div class="flex flex-col h-full">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                    <span class="material-symbols-outlined filled text-3xl">folder</span>
+                  </div>
+                </div>
+                <div class="relative" onclick="event.stopPropagation()">
+                  <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
+                    <span class="material-symbols-outlined text-gray-500">more_vert</span>
+                  </button>
+                  <div
+                    class="dropdown-menu hidden absolute right-0 mt-1 w-44 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden">
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">edit</span>
+                      Rename
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">palette</span>
+                      Change Color
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">content_copy</span>
+                      Duplicate
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
+                      <span class="material-symbols-outlined text-base">delete</span>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex-1">
+                <h3 class="font-bold text-lg text-gray-900 mb-1">Analytics Dashboard</h3>
+                <p class="text-sm text-gray-500 mb-4">Business intelligence & reports</p>
+              </div>
+
+              <div class="flex items-center justify-between pt-4 border-t border-red-100">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <span class="material-symbols-outlined text-sm">description</span>
+                    <span>3 pages</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <span class="material-symbols-outlined text-sm">schedule</span>
+                    <span>1d ago</span>
+                  </div>
+                </div>
+                <span
+                  class="material-symbols-outlined text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Folder 3: HR Management -->
+          <div onclick="openFolder('hr', 'HR Management')"
+            class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 cursor-pointer animate-slide-up min-h-[200px]"
+            style="animation-delay: 0.15s">
+            <div class="flex flex-col h-full">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                    <span class="material-symbols-outlined filled text-3xl">folder</span>
+                  </div>
+                </div>
+                <div class="relative" onclick="event.stopPropagation()">
+                  <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
+                    <span class="material-symbols-outlined text-gray-500">more_vert</span>
+                  </button>
+                  <div
+                    class="dropdown-menu hidden absolute right-0 mt-1 w-44 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden">
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">edit</span>
+                      Rename
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">palette</span>
+                      Change Color
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-base">content_copy</span>
+                      Duplicate
+                    </button>
+                    <button
+                      class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
+                      <span class="material-symbols-outlined text-base">delete</span>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex-1">
+                <h3 class="font-bold text-lg text-gray-900 mb-1">HR Management</h3>
+                <p class="text-sm text-gray-500 mb-4">Employee & payroll system</p>
+              </div>
+
+              <div class="flex items-center justify-between pt-4 border-t border-red-100">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <span class="material-symbols-outlined text-sm">description</span>
+                    <span>5 pages</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-xs text-gray-500">
+                    <span class="material-symbols-outlined text-sm">schedule</span>
+                    <span>3d ago</span>
+                  </div>
+                </div>
+                <span
+                  class="material-symbols-outlined text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all">arrow_forward</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Pages View (Inside Folder) -->
+      <div id="pages-view" class="view-container view-hidden">
+
+        <!-- Back Button -->
+        <button onclick="navigateToFolders()"
+          class="mb-6 flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors group">
+          <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+          <span class="font-medium">Back to Folders</span>
         </button>
 
-        <!-- Card 1: Published - Inventory Manager -->
-        <div
-          class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 animate-slide-up"
-          style="animation-delay: 0.05s">
-          <div class="flex flex-col h-full">
-            <div class="flex justify-between items-start mb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-600">
-                  <span class="material-symbols-outlined">inventory_2</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-lg text-gray-900">Inventory Manager</h3>
-                  <div class="flex items-center gap-2 mt-1">
-                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700">
-                      Published
-                    </span>
-                    <span class="text-xs text-gray-500">• 2 hours ago</span>
-                  </div>
-                </div>
-              </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="pages-grid">
 
-              <div class="relative">
-                <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
-                  <span class="material-symbols-outlined text-gray-500">more_vert</span>
-                </button>
-
-                <div
-                  class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in">
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">edit</span>
-                    Edit
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">content_copy</span>
-                    Duplicate
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
-                    <span class="material-symbols-outlined text-base">delete</span>
-                    Delete
-                  </button>
-                </div>
-              </div>
+          <!-- Create New Page Card -->
+          <button onclick="openCreatePageModal()"
+            class="group flex flex-col items-center justify-center p-8 bg-white border-2 border-dashed border-red-200 rounded-2xl hover:border-red-400 hover-lift transition-all duration-300 min-h-[240px]">
+            <div
+              class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-200 transition-all duration-300">
+              <span class="material-symbols-outlined text-4xl">note_add</span>
             </div>
+            <span class="mt-5 font-bold text-lg text-gray-900">Create New Page</span>
+            <span class="text-sm text-gray-500 mt-1">Add a new page to this project</span>
+          </button>
 
-            <p class="text-sm text-gray-600 mb-5 flex-1">
-              Track and manage your inventory levels, orders, and sales across multiple locations.
-            </p>
-
-            <div class="flex items-center justify-between pt-4 border-t border-red-100">
-              <div class="flex items-center gap-1 text-xs text-gray-500">
-                <span class="material-symbols-outlined text-sm">visibility</span>
-                <span>1.2k views</span>
-              </div>
-            </div>
-          </div>
         </div>
-
-        <!-- Card 2: Unpublished - Customer Support Portal -->
-        <div
-          class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 animate-slide-up"
-          style="animation-delay: 0.1s">
-          <div class="flex flex-col h-full">
-            <div class="flex justify-between items-start mb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
-                  <span class="material-symbols-outlined">support_agent</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-lg text-gray-900">Customer Support Portal</h3>
-                  <div class="flex items-center gap-2 mt-1">
-                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
-                      Unpublished
-                    </span>
-                    <span class="text-xs text-gray-500">• Yesterday</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="relative">
-                <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
-                  <span class="material-symbols-outlined text-gray-500">more_vert</span>
-                </button>
-
-                <div
-                  class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in">
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">edit</span>
-                    Edit
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">content_copy</span>
-                    Duplicate
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">publish</span>
-                    Publish
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
-                    <span class="material-symbols-outlined text-base">delete</span>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <p class="text-sm text-gray-600 mb-5 flex-1">
-              A centralized platform for managing customer inquiries, tickets, and support requests.
-            </p>
-
-            <div class="flex items-center justify-between pt-4 border-t border-red-100">
-              <div class="flex items-center gap-1 text-xs text-gray-500">
-                <span class="material-symbols-outlined text-sm">edit</span>
-                <span>In Draft</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3: Published - Analytics Dashboard -->
-        <div
-          class="group relative bg-white border border-red-100 rounded-2xl p-6 hover-lift transition-all duration-300 animate-slide-up"
-          style="animation-delay: 0.15s">
-          <div class="flex flex-col h-full">
-            <div class="flex justify-between items-start mb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600">
-                  <span class="material-symbols-outlined">analytics</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-lg text-gray-900">Analytics Dashboard</h3>
-                  <div class="flex items-center gap-2 mt-1">
-                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700">
-                      Published
-                    </span>
-                    <span class="text-xs text-gray-500">• 3 days ago</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="relative">
-                <button onclick="toggleMenu(this)" class="p-2 rounded-lg hover:bg-red-50 transition-colors">
-                  <span class="material-symbols-outlined text-gray-500">more_vert</span>
-                </button>
-
-                <div
-                  class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden animate-fade-in">
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">edit</span>
-                    Edit
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">content_copy</span>
-                    Duplicate
-                  </button>
-                  <button
-                    class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
-                    <span class="material-symbols-outlined text-base">delete</span>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <p class="text-sm text-gray-600 mb-5 flex-1">
-              Visualize and analyze your business data with interactive charts and reports.
-            </p>
-
-            <div class="flex items-center justify-between pt-4 border-t border-red-100">
-              <div class="flex items-center gap-1 text-xs text-gray-500">
-                <span class="material-symbols-outlined text-sm">visibility</span>
-                <span>3.5k views</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <!-- Workspace Overview Section -->
       <div class="mt-12 relative rounded-3xl overflow-hidden bg-red-600">
-        <!-- Pattern -->
         <div class="absolute inset-0 opacity-10"
           style="background-image: radial-gradient(white 2px, transparent 2px); background-size: 24px 24px;">
         </div>
-
-        <!-- Decorative Circles -->
         <div class="absolute top-6 left-6 w-16 h-16 rounded-full bg-white/10"></div>
         <div class="absolute bottom-6 right-10 w-24 h-24 rounded-full bg-white/10"></div>
 
@@ -363,20 +471,20 @@
           <h3 class="font-bold text-xl text-white mb-6">Workspace Overview</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
-              <div class="text-sm text-white/80">Total Apps</div>
+              <div class="text-sm text-white/80">Total Folders</div>
               <div class="text-3xl font-bold text-white mt-1">3</div>
             </div>
             <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
-              <div class="text-sm text-white/80">Published</div>
-              <div class="text-3xl font-bold text-white mt-1">2</div>
+              <div class="text-sm text-white/80">Total Pages</div>
+              <div class="text-3xl font-bold text-white mt-1">12</div>
             </div>
             <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
-              <div class="text-sm text-white/80">In Draft</div>
-              <div class="text-3xl font-bold text-white mt-1">1</div>
+              <div class="text-sm text-white/80">Published</div>
+              <div class="text-3xl font-bold text-white mt-1">8</div>
             </div>
             <div class="bg-white/20 backdrop-blur-sm p-5 rounded-xl">
               <div class="text-sm text-white/80">Storage Used</div>
-              <div class="text-3xl font-bold text-white mt-1">1.0 GB</div>
+              <div class="text-3xl font-bold text-white mt-1">2.4 GB</div>
             </div>
           </div>
         </div>
@@ -385,9 +493,187 @@
     </div>
   </main>
 
+  <!-- Create Folder Modal -->
+  <div id="create-folder-modal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-backdrop absolute inset-0" onclick="closeCreateFolderModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-in">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600">
+              <span class="material-symbols-outlined">create_new_folder</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">Create New Folder</h3>
+          </div>
+          <button onclick="closeCreateFolderModal()" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <span class="material-symbols-outlined text-gray-500">close</span>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 space-y-5">
+          <!-- Folder Name -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Folder Name</label>
+            <input type="text" id="folder-name-input" placeholder="Enter folder name..."
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Description (Optional)</label>
+            <textarea id="folder-desc-input" rows="3" placeholder="Brief description of this project..."
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"></textarea>
+          </div>
+
+          <!-- Folder Color -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-3">Folder Color</label>
+            <div class="flex items-center gap-3">
+              <button onclick="selectFolderColor(this, 'amber')"
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 ring-2 ring-amber-500 ring-offset-2 transition-all"></button>
+              <button onclick="selectFolderColor(this, 'blue')"
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 transition-all"></button>
+              <button onclick="selectFolderColor(this, 'emerald')"
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 hover:ring-2 hover:ring-emerald-500 hover:ring-offset-2 transition-all"></button>
+              <button onclick="selectFolderColor(this, 'purple')"
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 hover:ring-2 hover:ring-purple-500 hover:ring-offset-2 transition-all"></button>
+              <button onclick="selectFolderColor(this, 'rose')"
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 hover:ring-2 hover:ring-rose-500 hover:ring-offset-2 transition-all"></button>
+              <button onclick="selectFolderColor(this, 'cyan')"
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 hover:ring-2 hover:ring-cyan-500 hover:ring-offset-2 transition-all"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-100">
+          <button onclick="closeCreateFolderModal()"
+            class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+            Cancel
+          </button>
+          <button onclick="createFolder()"
+            class="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-lg shadow-red-600/30 transition-all">
+            Create Folder
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Page Modal -->
+  <div id="create-page-modal" class="fixed inset-0 z-50 hidden">
+    <div class="modal-backdrop absolute inset-0" onclick="closeCreatePageModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-in">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+              <span class="material-symbols-outlined">note_add</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900">Create New Page</h3>
+          </div>
+          <button onclick="closeCreatePageModal()" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <span class="material-symbols-outlined text-gray-500">close</span>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 space-y-5">
+          <!-- Page Name -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Page Name</label>
+            <input type="text" id="page-name-input" placeholder="Enter page name..."
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
+          </div>
+
+          <!-- Page Type -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-3">Page Type</label>
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="selectPageType(this, 'blank')"
+                class="page-type-btn selected flex flex-col items-center gap-2 p-4 bg-red-50 border-2 border-red-500 rounded-xl transition-all">
+                <span class="material-symbols-outlined text-2xl text-red-600">draft</span>
+                <span class="text-sm font-medium text-gray-900">Blank Page</span>
+              </button>
+              <button onclick="selectPageType(this, 'dashboard')"
+                class="page-type-btn flex flex-col items-center gap-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-all">
+                <span class="material-symbols-outlined text-2xl text-gray-600">dashboard</span>
+                <span class="text-sm font-medium text-gray-900">Dashboard</span>
+              </button>
+              <button onclick="selectPageType(this, 'form')"
+                class="page-type-btn flex flex-col items-center gap-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-all">
+                <span class="material-symbols-outlined text-2xl text-gray-600">edit_note</span>
+                <span class="text-sm font-medium text-gray-900">Form</span>
+              </button>
+              <button onclick="selectPageType(this, 'table')"
+                class="page-type-btn flex flex-col items-center gap-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-all">
+                <span class="material-symbols-outlined text-2xl text-gray-600">table_chart</span>
+                <span class="text-sm font-medium text-gray-900">Data Table</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 p-6 border-t border-gray-100">
+          <button onclick="closeCreatePageModal()"
+            class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+            Cancel
+          </button>
+          <button onclick="createPage()"
+            class="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl shadow-lg shadow-red-600/30 transition-all">
+            Create Page
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Sample data for folders and pages
+    const foldersData = {
+      'ecommerce': {
+        name: 'E-commerce Platform',
+        color: 'amber',
+        pages: [
+          { id: 'home', name: 'Home Page', type: 'dashboard', status: 'published', lastModified: '2 hours ago', views: '1.2k' },
+          { id: 'products', name: 'Products Listing', type: 'table', status: 'published', lastModified: '5 hours ago', views: '856' },
+          { id: 'checkout', name: 'Checkout Flow', type: 'form', status: 'draft', lastModified: '1 day ago', views: '0' },
+          { id: 'orders', name: 'Order Management', type: 'table', status: 'published', lastModified: '3 days ago', views: '2.1k' }
+        ]
+      },
+      'analytics': {
+        name: 'Analytics Dashboard',
+        color: 'blue',
+        pages: [
+          { id: 'overview', name: 'Overview Dashboard', type: 'dashboard', status: 'published', lastModified: '1 day ago', views: '3.5k' },
+          { id: 'sales', name: 'Sales Analytics', type: 'dashboard', status: 'published', lastModified: '2 days ago', views: '1.8k' },
+          { id: 'reports', name: 'Custom Reports', type: 'form', status: 'draft', lastModified: '4 days ago', views: '0' }
+        ]
+      },
+      'hr': {
+        name: 'HR Management',
+        color: 'emerald',
+        pages: [
+          { id: 'employees', name: 'Employee Directory', type: 'table', status: 'published', lastModified: '3 days ago', views: '945' },
+          { id: 'attendance', name: 'Attendance Tracker', type: 'table', status: 'published', lastModified: '1 week ago', views: '1.5k' },
+          { id: 'leave', name: 'Leave Management', type: 'form', status: 'published', lastModified: '5 days ago', views: '678' },
+          { id: 'payroll', name: 'Payroll Dashboard', type: 'dashboard', status: 'draft', lastModified: '2 days ago', views: '0' },
+          { id: 'onboarding', name: 'Onboarding Form', type: 'form', status: 'published', lastModified: '1 week ago', views: '234' }
+        ]
+      }
+    };
+
+    let currentFolder = null;
+    let selectedFolderColor = 'amber';
+    let selectedPageType = 'blank';
+
     // Toggle dropdown menu
     function toggleMenu(btn) {
+      event.stopPropagation();
       const allMenus = document.querySelectorAll('.dropdown-menu');
       const currentMenu = btn.nextElementSibling;
 
@@ -402,10 +688,247 @@
 
     // Close dropdown when clicking outside
     document.addEventListener('click', function (e) {
-      if (!e.target.closest('.relative')) {
+      if (!e.target.closest('.dropdown-menu') && !e.target.closest('button')) {
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
           menu.classList.add('hidden');
         });
+      }
+    });
+
+    // Open folder and show pages
+    function openFolder(folderId, folderName) {
+      currentFolder = folderId;
+      const folder = foldersData[folderId];
+
+      // Update breadcrumb
+      document.getElementById('breadcrumb-separator').classList.remove('hidden');
+      document.getElementById('breadcrumb-folder').classList.remove('hidden');
+      document.getElementById('breadcrumb-folder').textContent = folderName;
+
+      // Update page title
+      document.getElementById('page-title').textContent = folderName;
+      document.getElementById('page-description').textContent = `Manage pages in ${folderName}`;
+
+      // Switch views
+      document.getElementById('folders-view').classList.add('view-hidden');
+      document.getElementById('folders-view').classList.remove('view-visible');
+      document.getElementById('pages-view').classList.remove('view-hidden');
+      document.getElementById('pages-view').classList.add('view-visible');
+
+      // Render pages
+      renderPages(folder.pages);
+    }
+
+    // Navigate back to folders
+    function navigateToFolders() {
+      currentFolder = null;
+
+      // Update breadcrumb
+      document.getElementById('breadcrumb-separator').classList.add('hidden');
+      document.getElementById('breadcrumb-folder').classList.add('hidden');
+
+      // Update page title
+      document.getElementById('page-title').textContent = 'My Workspace';
+      document.getElementById('page-description').textContent = 'Organize your projects into folders';
+
+      // Switch views
+      document.getElementById('pages-view').classList.add('view-hidden');
+      document.getElementById('pages-view').classList.remove('view-visible');
+      document.getElementById('folders-view').classList.remove('view-hidden');
+      document.getElementById('folders-view').classList.add('view-visible');
+    }
+
+    // Render pages in the current folder
+    function renderPages(pages) {
+      const pagesGrid = document.getElementById('pages-grid');
+
+      // Keep the create button, remove other pages
+      const createBtn = pagesGrid.querySelector('button');
+      pagesGrid.innerHTML = '';
+      pagesGrid.appendChild(createBtn);
+
+      // Add page cards
+      pages.forEach((page, index) => {
+        const pageCard = createPageCard(page, index);
+        pagesGrid.appendChild(pageCard);
+      });
+    }
+
+    // Create page card element
+    function createPageCard(page, index) {
+      const card = document.createElement('div');
+      card.className = `group relative bg-white border border-red-100 rounded-2xl overflow-hidden hover-lift transition-all duration-300 animate-slide-up`;
+      card.style.animationDelay = `${(index + 1) * 0.05}s`;
+
+      const statusColor = page.status === 'published' ? 'green' : 'amber';
+      const statusText = page.status === 'published' ? 'Published' : 'Draft';
+
+      const typeIcons = {
+        'dashboard': 'dashboard',
+        'form': 'edit_note',
+        'table': 'table_chart',
+        'blank': 'draft'
+      };
+
+      card.innerHTML = `
+        <!-- Page Preview -->
+        <div class="h-32 bg-gradient-to-br from-gray-50 to-gray-100 relative flex items-center justify-center border-b border-gray-100">
+          <div class="w-16 h-16 rounded-xl page-icon-gradient flex items-center justify-center text-white shadow-lg">
+            <span class="material-symbols-outlined text-3xl">${typeIcons[page.type] || 'description'}</span>
+          </div>
+          <div class="absolute top-3 right-3">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-${statusColor}-100 text-${statusColor}-700">
+              ${statusText}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Page Info -->
+        <div class="p-5">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-bold text-gray-900">${page.name}</h3>
+            <div class="relative">
+              <button onclick="event.stopPropagation(); toggleMenu(this)" class="p-1.5 rounded-lg hover:bg-red-50 transition-colors">
+                <span class="material-symbols-outlined text-gray-400 text-xl">more_vert</span>
+              </button>
+              <div class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden">
+                <button onclick="event.stopPropagation(); openPageInCanvas('${page.id}')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-base">edit</span>
+                  Edit
+                </button>
+                <button class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-base">content_copy</span>
+                  Duplicate
+                </button>
+                <button class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-base">drive_file_rename_outline</span>
+                  Rename
+                </button>
+                <button class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
+                  <span class="material-symbols-outlined text-base">delete</span>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
+            <span class="capitalize">${page.type}</span>
+            <span>•</span>
+            <span>${page.lastModified}</span>
+          </div>
+          
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1 text-xs text-gray-500">
+              <span class="material-symbols-outlined text-sm">visibility</span>
+              <span>${page.views} views</span>
+            </div>
+            <button onclick="event.stopPropagation(); openPageInCanvas('${page.id}')" 
+              class="flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 transition-colors">
+              <span>Open</span>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      card.onclick = () => openPageInCanvas(page.id);
+
+      return card;
+    }
+
+    // Open page in canvas
+    function openPageInCanvas(pageId) {
+      window.location.href = `/canvas.html?folder=${currentFolder}&page=${pageId}`;
+    }
+
+    // Modal Functions
+    function openCreateFolderModal() {
+      document.getElementById('create-folder-modal').classList.remove('hidden');
+      document.getElementById('folder-name-input').focus();
+    }
+
+    function closeCreateFolderModal() {
+      document.getElementById('create-folder-modal').classList.add('hidden');
+      document.getElementById('folder-name-input').value = '';
+      document.getElementById('folder-desc-input').value = '';
+    }
+
+    function openCreatePageModal() {
+      document.getElementById('create-page-modal').classList.remove('hidden');
+      document.getElementById('page-name-input').focus();
+    }
+
+    function closeCreatePageModal() {
+      document.getElementById('create-page-modal').classList.add('hidden');
+      document.getElementById('page-name-input').value = '';
+    }
+
+    function selectFolderColor(btn, color) {
+      selectedFolderColor = color;
+      // Remove ring from all color buttons
+      btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.classList.remove('ring-2', 'ring-offset-2');
+        b.classList.remove('ring-amber-500', 'ring-blue-500', 'ring-emerald-500', 'ring-purple-500', 'ring-rose-500', 'ring-cyan-500');
+      });
+      // Add ring to selected
+      btn.classList.add('ring-2', 'ring-offset-2', `ring-${color}-500`);
+    }
+
+    function selectPageType(btn, type) {
+      selectedPageType = type;
+      // Remove selected state from all
+      document.querySelectorAll('.page-type-btn').forEach(b => {
+        b.classList.remove('selected', 'bg-red-50', 'border-red-500');
+        b.classList.add('bg-gray-50', 'border-gray-200');
+        b.querySelector('.material-symbols-outlined').classList.remove('text-red-600');
+        b.querySelector('.material-symbols-outlined').classList.add('text-gray-600');
+      });
+      // Add selected state
+      btn.classList.add('selected', 'bg-red-50', 'border-red-500');
+      btn.classList.remove('bg-gray-50', 'border-gray-200');
+      btn.querySelector('.material-symbols-outlined').classList.add('text-red-600');
+      btn.querySelector('.material-symbols-outlined').classList.remove('text-gray-600');
+    }
+
+    function createFolder() {
+      const name = document.getElementById('folder-name-input').value.trim();
+      const desc = document.getElementById('folder-desc-input').value.trim();
+
+      if (!name) {
+        alert('Please enter a folder name');
+        return;
+      }
+
+      // Here you would typically send to backend
+      console.log('Creating folder:', { name, desc, color: selectedFolderColor });
+
+      closeCreateFolderModal();
+      // Refresh or add folder to grid
+      alert('Folder created successfully!');
+    }
+
+    function createPage() {
+      const name = document.getElementById('page-name-input').value.trim();
+
+      if (!name) {
+        alert('Please enter a page name');
+        return;
+      }
+
+      // Here you would typically send to backend
+      console.log('Creating page:', { name, type: selectedPageType, folder: currentFolder });
+
+      closeCreatePageModal();
+      // Open canvas with new page
+      window.location.href = `/canvas.html?folder=${currentFolder}&page=new&type=${selectedPageType}&name=${encodeURIComponent(name)}`;
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeCreateFolderModal();
+        closeCreatePageModal();
       }
     });
 
@@ -418,19 +941,6 @@
         }, index * 50);
       });
     });
-
-    // Navigation functions
-    function locateToCanvas() {
-      window.location.href = "/canvas.html";
-    }
-
-    function locateToLogin() {
-      window.location.href = "/login.html";
-    }
-
-    function locateToSignUp() {
-      window.location.href = "/signup.html";
-    }
   </script>
 
 </body>

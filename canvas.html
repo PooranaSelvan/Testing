@@ -69,6 +69,28 @@
                border-color: #dc2626;
           }
 
+          /* Device button styling */
+          .device-button {
+               transition: all 0.2s ease;
+          }
+
+          .device-button.active {
+               background-color: #dc2626;
+               color: white;
+               box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+          }
+
+          .device-button:not(.active):hover {
+               background-color: #f3f4f6;
+               color: #dc2626;
+          }
+
+          /* Canvas transition */
+          #canvas-content {
+               transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    min-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
           /* Custom dropdown styling */
           .custom-dropdown {
                position: relative;
@@ -194,6 +216,52 @@
                border-color: #dc2626;
                box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
           }
+
+          /* File upload dropzone */
+          .dropzone {
+               transition: all 0.3s ease;
+          }
+
+          .dropzone.dragover {
+               border-color: #dc2626;
+               background-color: #fef2f2;
+          }
+
+          .dropzone.dragover .dropzone-icon {
+               color: #dc2626;
+               transform: scale(1.1);
+          }
+
+          /* File type chip */
+          .file-type-chip {
+               transition: all 0.2s ease;
+          }
+
+          .file-type-chip.active {
+               background-color: #dc2626;
+               color: white;
+               border-color: #dc2626;
+          }
+
+          .file-type-chip:not(.active):hover {
+               border-color: #dc2626;
+               color: #dc2626;
+          }
+
+          /* Progress bar animation */
+          @keyframes progress {
+               0% {
+                    width: 0%;
+               }
+
+               100% {
+                    width: 100%;
+               }
+          }
+
+          .progress-bar {
+               animation: progress 2s ease-in-out;
+          }
      </style>
 </head>
 
@@ -203,7 +271,8 @@
           <!-- Header - Clean white with subtle shadow -->
           <header
                class="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-3 shrink-0 shadow-sm">
-               <div class="flex items-center gap-4">
+               <!-- Left: Logo -->
+               <div class="flex items-center gap-4 flex-1">
                     <a href="./index.html" class="flex items-center gap-2 group">
                          <div class="w-8 h-8 text-red-600 transition-transform duration-300 group-hover:scale-110">
                               <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -214,7 +283,47 @@
                          <span class="text-xl font-bold text-gray-900">Sirpam</span>
                     </a>
                </div>
-               <div class="flex items-center gap-4">
+
+               <!-- Center: Device Toggle Buttons -->
+               <div class="flex items-center justify-center flex-1">
+                    <div class="flex items-center bg-gray-100 rounded-xl p-1.5 gap-1 shadow-inner">
+                         <!-- Mobile Device -->
+                         <button
+                              class="device-button flex items-center justify-center w-10 h-10 rounded-lg text-gray-500"
+                              data-device="mobile" data-width="375" title="Mobile (375px)">
+                              <span class="material-symbols-outlined text-xl">smartphone</span>
+                         </button>
+
+                         <!-- Tablet Device -->
+                         <button
+                              class="device-button flex items-center justify-center w-10 h-10 rounded-lg text-gray-500"
+                              data-device="tablet" data-width="768" title="Tablet (768px)">
+                              <span class="material-symbols-outlined text-xl">tablet</span>
+                         </button>
+
+                         <!-- Desktop Device (Active by default) -->
+                         <button class="device-button active flex items-center justify-center w-10 h-10 rounded-lg"
+                              data-device="desktop" data-width="1000" title="Desktop (1000px)">
+                              <span class="material-symbols-outlined text-xl">desktop_windows</span>
+                         </button>
+
+                         <!-- Full Width -->
+                         <button
+                              class="device-button flex items-center justify-center w-10 h-10 rounded-lg text-gray-500"
+                              data-device="full" data-width="100%" title="Full Width">
+                              <span class="material-symbols-outlined text-xl">fit_screen</span>
+                         </button>
+                    </div>
+
+                    <!-- Dimension Display -->
+                    <div class="ml-4 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg flex items-center gap-2">
+                         <span class="material-symbols-outlined text-sm text-gray-400">straighten</span>
+                         <span id="dimension-display" class="text-xs font-semibold text-gray-600">1000 × 800</span>
+                    </div>
+               </div>
+
+               <!-- Right: Actions -->
+               <div class="flex items-center gap-4 flex-1 justify-end">
                     <div class="flex gap-2">
                          <button
                               class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-9 px-4 bg-gray-100 text-gray-700 text-sm font-semibold transition-all hover:bg-gray-200">
@@ -427,18 +536,19 @@
                </aside>
 
                <!-- Main Canvas Area - Neutral background -->
-               <section class="flex-1 bg-gray-200/70 p-8 relative overflow-auto" id="canvas-container">
+               <section class="flex-1 bg-gray-200/70 p-8 relative overflow-auto flex justify-center"
+                    id="canvas-container">
                     <div class="absolute inset-0 canvas-grid opacity-50 pointer-events-none"></div>
 
                     <!-- Canvas Content -->
                     <div id="canvas-content"
-                         class="relative z-10 mx-auto max-w-[1000px] min-h-[800px] bg-white rounded-xl shadow-xl border border-gray-200 p-10">
+                         class="relative z-10 w-[1000px] min-h-[800px] bg-white rounded-xl shadow-xl border border-gray-200 p-10">
                          <div class="flex justify-between items-center mb-8">
                               <div>
                                    <h1 class="text-2xl font-bold text-gray-900">Executive Dashboard</h1>
                               </div>
                          </div>
-                         <div class="grid grid-cols-3 gap-6 mb-8">
+                         <div class="grid grid-cols-3 gap-6 mb-8" id="dashboard-grid">
                               <div class="h-32 bg-gray-50 rounded-xl border border-gray-200 p-4">
                                    <p class="text-xs font-semibold text-gray-500">Total Revenue</p>
                                    <p class="text-2xl font-bold mt-2 text-gray-900">$42,800</p>
@@ -1145,6 +1255,198 @@
 
                          <!-- Resources Tab Content -->
                          <div id="resources-tab" class="tab-content">
+
+                              <!-- External Data Sources Section -->
+                              <div class="border-b border-gray-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-gray-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-500">upload_file</span>
+                                             <span class="text-gray-800">External Data Sources</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg text-gray-400">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-4">
+                                        <!-- Drag & Drop Upload Area -->
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-2 block">Upload
+                                                  File</label>
+                                             <div id="dropzone"
+                                                  class="dropzone border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-red-400 hover:bg-red-50/30 transition-all">
+                                                  <input type="file" id="file-input" class="hidden"
+                                                       accept=".csv,.json,.xlsx,.xls,.xml" multiple />
+                                                  <div class="flex flex-col items-center gap-2">
+                                                       <div
+                                                            class="dropzone-icon w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center transition-all">
+                                                            <span
+                                                                 class="material-symbols-outlined text-2xl text-gray-400">cloud_upload</span>
+                                                       </div>
+                                                       <div>
+                                                            <p class="text-xs font-semibold text-gray-700">Drop files
+                                                                 here or <span class="text-red-600">browse</span></p>
+                                                            <p class="text-[10px] text-gray-400 mt-1">CSV, JSON (Max 10MB)</p>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                        </div>
+
+                                        <!-- OR Divider -->
+                                        <div class="flex items-center gap-3">
+                                             <div class="flex-1 h-px bg-gray-200"></div>
+                                             <span class="text-[10px] font-bold text-gray-400 uppercase">Or</span>
+                                             <div class="flex-1 h-px bg-gray-200"></div>
+                                        </div>
+
+                                        <!-- URL Import -->
+                                        <div>
+                                             <label
+                                                  class="text-[10px] font-bold text-gray-500 uppercase mb-1.5 block">Import
+                                                  from URL</label>
+                                             <div class="flex items-center gap-2">
+                                                  <div class="relative flex-1">
+                                                       <span
+                                                            class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-sm">link</span>
+                                                       <input
+                                                            class="w-full bg-gray-50 border border-gray-200 rounded text-xs h-8 pl-8 pr-2"
+                                                            type="text" placeholder="https://example.com/data.csv" />
+                                                  </div>
+                                                  <button
+                                                       class="h-8 px-3 bg-red-600 text-white text-xs font-bold rounded hover:bg-red-700 transition-colors flex items-center gap-1">
+                                                       <span class="material-symbols-outlined text-sm">download</span>
+                                                       Fetch
+                                                  </button>
+                                             </div>
+                                        </div>
+                                   </div>
+                              </div>
+
+                              <!-- Imported Files Section -->
+                              <div class="border-b border-gray-100">
+                                   <button
+                                        class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-gray-50 transition-colors"
+                                        onclick="toggleSection(this)">
+                                        <div class="flex items-center gap-2">
+                                             <span
+                                                  class="material-symbols-outlined text-lg text-red-500">folder_open</span>
+                                             <span class="text-gray-800">Imported Files</span>
+                                             <span
+                                                  class="px-1.5 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded">3</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-lg text-gray-400">expand_less</span>
+                                   </button>
+                                   <div class="px-4 pb-4 space-y-2" id="imported-files-list">
+                                        <!-- Imported File Item 1 -->
+                                        <div
+                                             class="flex items-center justify-between p-2.5 rounded-lg bg-gray-50 border border-gray-200 group hover:border-gray-300 transition-all">
+                                             <div class="flex items-center gap-3">
+                                                  <div
+                                                       class="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center">
+                                                       <span
+                                                            class="material-symbols-outlined text-green-600 text-lg">table_chart</span>
+                                                  </div>
+                                                  <div>
+                                                       <p class="text-xs font-bold text-gray-700">sales_data_2024.csv
+                                                       </p>
+                                                       <div class="flex items-center gap-2 mt-0.5">
+                                                            <span class="text-[10px] text-gray-400">1.2 MB</span>
+                                                            <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                                            <span class="text-[10px] text-gray-400">2,450 rows</span>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                             <div
+                                                  class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                  <button class="p-1.5 hover:bg-gray-200 rounded transition-colors"
+                                                       title="Preview">
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-500">visibility</span>
+                                                  </button>
+                                                  <button class="p-1.5 hover:bg-gray-200 rounded transition-colors"
+                                                       title="Edit">
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-500">edit</span>
+                                                  </button>
+                                                  <button class="p-1.5 hover:bg-red-100 rounded transition-colors"
+                                                       title="Delete">
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-red-500">delete</span>
+                                                  </button>
+                                             </div>
+                                        </div>
+
+                                        <!-- Imported File Item 2 -->
+                                        <div
+                                             class="flex items-center justify-between p-2.5 rounded-lg bg-gray-50 border border-gray-200 group hover:border-gray-300 transition-all">
+                                             <div class="flex items-center gap-3">
+                                                  <div
+                                                       class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                       <span
+                                                            class="material-symbols-outlined text-orange-600 text-lg">data_object</span>
+                                                  </div>
+                                                  <div>
+                                                       <p class="text-xs font-bold text-gray-700">user_analytics.json
+                                                       </p>
+                                                       <div class="flex items-center gap-2 mt-0.5">
+                                                            <span class="text-[10px] text-gray-400">856 KB</span>
+                                                            <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                                            <span class="text-[10px] text-gray-400">1,024 records</span>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                             <div
+                                                  class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                  <button class="p-1.5 hover:bg-gray-200 rounded transition-colors"
+                                                       title="Preview">
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-500">visibility</span>
+                                                  </button>
+                                                  <button class="p-1.5 hover:bg-gray-200 rounded transition-colors"
+                                                       title="Edit">
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-gray-500">edit</span>
+                                                  </button>
+                                                  <button class="p-1.5 hover:bg-red-100 rounded transition-colors"
+                                                       title="Delete">
+                                                       <span
+                                                            class="material-symbols-outlined text-sm text-red-500">delete</span>
+                                                  </button>
+                                             </div>
+                                        </div>
+
+                                        <!-- Imported File Item 3 - Uploading State -->
+                                        <div
+                                             class="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 border border-blue-200">
+                                             <div class="flex items-center gap-3 flex-1">
+                                                  <div
+                                                       class="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center">
+                                                       <span
+                                                            class="material-symbols-outlined text-blue-600 text-lg animate-spin">sync</span>
+                                                  </div>
+                                                  <div class="flex-1">
+                                                       <p class="text-xs font-bold text-gray-700">inventory_report.xlsx
+                                                       </p>
+                                                       <div class="mt-1.5">
+                                                            <div class="h-1.5 bg-blue-200 rounded-full overflow-hidden">
+                                                                 <div class="progress-bar h-full bg-blue-600 rounded-full"
+                                                                      style="width: 65%;"></div>
+                                                            </div>
+                                                            <p class="text-[10px] text-blue-600 mt-1">Uploading... 65%
+                                                            </p>
+                                                       </div>
+                                                  </div>
+                                             </div>
+                                             <button class="p-1.5 hover:bg-blue-200 rounded transition-colors"
+                                                  title="Cancel">
+                                                  <span
+                                                       class="material-symbols-outlined text-sm text-blue-600">close</span>
+                                             </button>
+                                        </div>
+                                   </div>
+                              </div>
+
                               <!-- Data Binding -->
                               <div class="border-b border-gray-100">
                                    <button
@@ -1153,7 +1455,7 @@
                                         <div class="flex items-center gap-2">
                                              <span
                                                   class="material-symbols-outlined text-lg text-red-500">database</span>
-                                             <span class="text-gray-800">Data Binding</span>
+                                             <span class="text-gray-800">Database Connection</span>
                                         </div>
                                         <span class="material-symbols-outlined text-lg text-gray-400">expand_less</span>
                                    </button>
@@ -1208,7 +1510,7 @@
                                         class="w-full flex items-center justify-between p-4 text-sm font-bold bg-white hover:bg-gray-50 transition-colors"
                                         onclick="toggleSection(this)">
                                         <div class="flex items-center gap-2">
-                                             <span class="material-symbols-outlined text-lg text-red-500">link</span>
+                                             <span class="material-symbols-outlined text-lg text-red-500">api</span>
                                              <span class="text-gray-800">API Connections</span>
                                         </div>
                                         <span class="material-symbols-outlined text-lg text-gray-400">expand_less</span>
@@ -1253,7 +1555,165 @@
           document.addEventListener('DOMContentLoaded', function () {
                const container = document.getElementById('canvas-container');
                const content = document.getElementById('canvas-content');
+               const dashboardGrid = document.getElementById('dashboard-grid');
+               const dimensionDisplay = document.getElementById('dimension-display');
                let scale = 1;
+
+               // Device configurations
+               const deviceConfigs = {
+                    mobile: { width: 375, height: 667, gridCols: 1 },
+                    tablet: { width: 768, height: 1024, gridCols: 2 },
+                    desktop: { width: 1000, height: 800, gridCols: 3 },
+                    full: { width: '100%', height: 800, gridCols: 3 }
+               };
+
+               // Device Button Handler
+               const deviceButtons = document.querySelectorAll('.device-button');
+
+               deviceButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                         const device = this.getAttribute('data-device');
+                         const config = deviceConfigs[device];
+
+                         // Update active state
+                         deviceButtons.forEach(btn => btn.classList.remove('active'));
+                         this.classList.add('active');
+
+                         // Apply canvas width
+                         if (config.width === '100%') {
+                              content.style.width = '100%';
+                              content.style.maxWidth = 'none';
+                              dimensionDisplay.textContent = '100% × ' + config.height;
+                         } else {
+                              content.style.width = config.width + 'px';
+                              content.style.maxWidth = config.width + 'px';
+                              dimensionDisplay.textContent = config.width + ' × ' + config.height;
+                         }
+
+                         content.style.minHeight = config.height + 'px';
+
+                         // Update grid columns based on device
+                         dashboardGrid.className = dashboardGrid.className.replace(/grid-cols-\d/g, '');
+                         dashboardGrid.classList.add('grid', `grid-cols-${config.gridCols}`, 'gap-6', 'mb-8');
+
+                         // Adjust padding for smaller screens
+                         if (device === 'mobile') {
+                              content.classList.remove('p-10');
+                              content.classList.add('p-4');
+                         } else if (device === 'tablet') {
+                              content.classList.remove('p-10', 'p-4');
+                              content.classList.add('p-6');
+                         } else {
+                              content.classList.remove('p-4', 'p-6');
+                              content.classList.add('p-10');
+                         }
+                    });
+               });
+
+               // File Type Chip Selection
+               const fileTypeChips = document.querySelectorAll('.file-type-chip');
+               fileTypeChips.forEach(chip => {
+                    chip.addEventListener('click', function () {
+                         fileTypeChips.forEach(c => c.classList.remove('active'));
+                         this.classList.add('active');
+                    });
+               });
+
+               // Dropzone functionality
+               const dropzone = document.getElementById('dropzone');
+               const fileInput = document.getElementById('file-input');
+
+               dropzone.addEventListener('click', () => fileInput.click());
+
+               dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('dragover');
+               });
+
+               dropzone.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+               });
+
+               dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    handleFiles(files);
+               });
+
+               fileInput.addEventListener('change', (e) => {
+                    handleFiles(e.target.files);
+               });
+
+               function handleFiles(files) {
+                    for (let file of files) {
+                         console.log('File uploaded:', file.name, file.size, file.type);
+                         // Add file to the imported files list
+                         addFileToList(file);
+                    }
+               }
+
+               function addFileToList(file) {
+                    const fileList = document.getElementById('imported-files-list');
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                    let iconClass = 'table_chart';
+                    let bgColor = 'bg-green-100';
+                    let textColor = 'text-green-600';
+
+                    if (fileExtension === 'json') {
+                         iconClass = 'data_object';
+                         bgColor = 'bg-orange-100';
+                         textColor = 'text-orange-600';
+                    } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+                         iconClass = 'grid_on';
+                         bgColor = 'bg-emerald-100';
+                         textColor = 'text-emerald-600';
+                    } else if (fileExtension === 'xml') {
+                         iconClass = 'code';
+                         bgColor = 'bg-purple-100';
+                         textColor = 'text-purple-600';
+                    }
+
+                    const fileSize = (file.size / 1024).toFixed(1) + ' KB';
+
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'flex items-center justify-between p-2.5 rounded-lg bg-gray-50 border border-gray-200 group hover:border-gray-300 transition-all';
+                    fileItem.innerHTML = `
+                         <div class="flex items-center gap-3">
+                              <div class="w-9 h-9 rounded-lg ${bgColor} flex items-center justify-center">
+                                   <span class="material-symbols-outlined ${textColor} text-lg">${iconClass}</span>
+                              </div>
+                              <div>
+                                   <p class="text-xs font-bold text-gray-700">${file.name}</p>
+                                   <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="text-[10px] text-gray-400">${fileSize}</span>
+                                        <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                        <span class="text-[10px] text-green-600">Uploaded</span>
+                                   </div>
+                              </div>
+                         </div>
+                         <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button class="p-1.5 hover:bg-gray-200 rounded transition-colors" title="Preview">
+                                   <span class="material-symbols-outlined text-sm text-gray-500">visibility</span>
+                              </button>
+                              <button class="p-1.5 hover:bg-gray-200 rounded transition-colors" title="Edit">
+                                   <span class="material-symbols-outlined text-sm text-gray-500">edit</span>
+                              </button>
+                              <button class="p-1.5 hover:bg-red-100 rounded transition-colors delete-file" title="Delete">
+                                   <span class="material-symbols-outlined text-sm text-red-500">delete</span>
+                              </button>
+                         </div>
+                    `;
+
+                    // Add delete functionality
+                    fileItem.querySelector('.delete-file').addEventListener('click', () => {
+                         fileItem.remove();
+                    });
+
+                    fileList.insertBefore(fileItem, fileList.firstChild);
+               }
 
                // Mouse wheel zoom (with Ctrl/Cmd)
                container.addEventListener('wheel', function (e) {
@@ -1283,7 +1743,7 @@
                     container.scrollTop = newScrollTop;
                }
 
-               // Drag and Drop
+               // Drag and Drop Components
                document.querySelectorAll('[draggable="true"]').forEach(item => {
                     item.addEventListener('dragstart', (e) => {
                          e.dataTransfer.setData('text/plain', e.target.getAttribute('data-component-type'));
