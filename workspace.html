@@ -11,7 +11,6 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0..200&display=swap"
     rel="stylesheet" />
-
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -130,11 +129,6 @@
       background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
     }
 
-    /* Page icon */
-    .page-icon-gradient {
-      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-    }
-
     /* View transition */
     .view-container {
       transition: opacity 0.3s ease, transform 0.3s ease;
@@ -151,11 +145,19 @@
       opacity: 1;
       transform: translateX(0);
     }
+
+    /* Page card - ensure dropdown is visible */
+    .page-card {
+      overflow: visible !important;
+    }
+
+    .page-card .dropdown-menu {
+      z-index: 50;
+    }
   </style>
 </head>
 
 <body class="bg-red-50 text-gray-900 min-h-screen">
-
   <!-- Navigation -->
   <nav class="fixed top-0 w-full z-50 border-b border-red-100 bg-white/90 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -217,9 +219,6 @@
             <input type="text" placeholder="Search..."
               class="pl-10 pr-4 py-2.5 w-64 bg-white border border-red-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
           </div>
-          <button class="p-2.5 bg-white border border-red-100 rounded-xl hover:bg-red-50 transition-colors">
-            <span class="material-symbols-outlined text-gray-600">filter_list</span>
-          </button>
         </div>
       </div>
 
@@ -263,11 +262,6 @@
                     </button>
                     <button
                       class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                      <span class="material-symbols-outlined text-base">palette</span>
-                      Change Color
-                    </button>
-                    <button
-                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
                       <span class="material-symbols-outlined text-base">content_copy</span>
                       Duplicate
                     </button>
@@ -290,10 +284,6 @@
                   <div class="flex items-center gap-1 text-xs text-gray-500">
                     <span class="material-symbols-outlined text-sm">description</span>
                     <span>4 pages</span>
-                  </div>
-                  <div class="flex items-center gap-1 text-xs text-gray-500">
-                    <span class="material-symbols-outlined text-sm">schedule</span>
-                    <span>2h ago</span>
                   </div>
                 </div>
                 <span
@@ -327,11 +317,6 @@
                     </button>
                     <button
                       class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                      <span class="material-symbols-outlined text-base">palette</span>
-                      Change Color
-                    </button>
-                    <button
-                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
                       <span class="material-symbols-outlined text-base">content_copy</span>
                       Duplicate
                     </button>
@@ -354,10 +339,6 @@
                   <div class="flex items-center gap-1 text-xs text-gray-500">
                     <span class="material-symbols-outlined text-sm">description</span>
                     <span>3 pages</span>
-                  </div>
-                  <div class="flex items-center gap-1 text-xs text-gray-500">
-                    <span class="material-symbols-outlined text-sm">schedule</span>
-                    <span>1d ago</span>
                   </div>
                 </div>
                 <span
@@ -391,11 +372,6 @@
                     </button>
                     <button
                       class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                      <span class="material-symbols-outlined text-base">palette</span>
-                      Change Color
-                    </button>
-                    <button
-                      class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
                       <span class="material-symbols-outlined text-base">content_copy</span>
                       Duplicate
                     </button>
@@ -418,10 +394,6 @@
                   <div class="flex items-center gap-1 text-xs text-gray-500">
                     <span class="material-symbols-outlined text-sm">description</span>
                     <span>5 pages</span>
-                  </div>
-                  <div class="flex items-center gap-1 text-xs text-gray-500">
-                    <span class="material-symbols-outlined text-sm">schedule</span>
-                    <span>3d ago</span>
                   </div>
                 </div>
                 <span
@@ -447,7 +419,7 @@
 
           <!-- Create New Page Card -->
           <button onclick="openCreatePageModal()"
-            class="group flex flex-col items-center justify-center p-8 bg-white border-2 border-dashed border-red-200 rounded-2xl hover:border-red-400 hover-lift transition-all duration-300 min-h-[240px]">
+            class="group flex flex-col items-center justify-center p-8 bg-white border-2 border-dashed border-red-200 rounded-2xl hover:border-red-400 hover-lift transition-all duration-300 min-h-[200px]">
             <div
               class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-200 transition-all duration-300">
               <span class="material-symbols-outlined text-4xl">note_add</span>
@@ -460,7 +432,7 @@
       </div>
 
       <!-- Workspace Overview Section -->
-      <div class="mt-12 relative rounded-3xl overflow-hidden bg-red-600">
+      <div id="workspace-overview" class="mt-12 relative rounded-3xl overflow-hidden bg-red-600">
         <div class="absolute inset-0 opacity-10"
           style="background-image: radial-gradient(white 2px, transparent 2px); background-size: 24px 24px;">
         </div>
@@ -526,25 +498,6 @@
             <textarea id="folder-desc-input" rows="3" placeholder="Brief description of this project..."
               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"></textarea>
           </div>
-
-          <!-- Folder Color -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-3">Folder Color</label>
-            <div class="flex items-center gap-3">
-              <button onclick="selectFolderColor(this, 'amber')"
-                class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 ring-2 ring-amber-500 ring-offset-2 transition-all"></button>
-              <button onclick="selectFolderColor(this, 'blue')"
-                class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 transition-all"></button>
-              <button onclick="selectFolderColor(this, 'emerald')"
-                class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 hover:ring-2 hover:ring-emerald-500 hover:ring-offset-2 transition-all"></button>
-              <button onclick="selectFolderColor(this, 'purple')"
-                class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 hover:ring-2 hover:ring-purple-500 hover:ring-offset-2 transition-all"></button>
-              <button onclick="selectFolderColor(this, 'rose')"
-                class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-rose-600 hover:ring-2 hover:ring-rose-500 hover:ring-offset-2 transition-all"></button>
-              <button onclick="selectFolderColor(this, 'cyan')"
-                class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 hover:ring-2 hover:ring-cyan-500 hover:ring-offset-2 transition-all"></button>
-            </div>
-          </div>
         </div>
 
         <!-- Modal Footer -->
@@ -588,33 +541,6 @@
             <input type="text" id="page-name-input" placeholder="Enter page name..."
               class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
           </div>
-
-          <!-- Page Type -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-3">Page Type</label>
-            <div class="grid grid-cols-2 gap-3">
-              <button onclick="selectPageType(this, 'blank')"
-                class="page-type-btn selected flex flex-col items-center gap-2 p-4 bg-red-50 border-2 border-red-500 rounded-xl transition-all">
-                <span class="material-symbols-outlined text-2xl text-red-600">draft</span>
-                <span class="text-sm font-medium text-gray-900">Blank Page</span>
-              </button>
-              <button onclick="selectPageType(this, 'dashboard')"
-                class="page-type-btn flex flex-col items-center gap-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-all">
-                <span class="material-symbols-outlined text-2xl text-gray-600">dashboard</span>
-                <span class="text-sm font-medium text-gray-900">Dashboard</span>
-              </button>
-              <button onclick="selectPageType(this, 'form')"
-                class="page-type-btn flex flex-col items-center gap-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-all">
-                <span class="material-symbols-outlined text-2xl text-gray-600">edit_note</span>
-                <span class="text-sm font-medium text-gray-900">Form</span>
-              </button>
-              <button onclick="selectPageType(this, 'table')"
-                class="page-type-btn flex flex-col items-center gap-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-all">
-                <span class="material-symbols-outlined text-2xl text-gray-600">table_chart</span>
-                <span class="text-sm font-medium text-gray-900">Data Table</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         <!-- Modal Footer -->
@@ -633,43 +559,42 @@
   </div>
 
   <script>
-    // Sample data for folders and pages
+    // Sample data for folders and pages (removed lastModified and type)
     const foldersData = {
       'ecommerce': {
         name: 'E-commerce Platform',
         color: 'amber',
         pages: [
-          { id: 'home', name: 'Home Page', type: 'dashboard', status: 'published', lastModified: '2 hours ago', views: '1.2k' },
-          { id: 'products', name: 'Products Listing', type: 'table', status: 'published', lastModified: '5 hours ago', views: '856' },
-          { id: 'checkout', name: 'Checkout Flow', type: 'form', status: 'draft', lastModified: '1 day ago', views: '0' },
-          { id: 'orders', name: 'Order Management', type: 'table', status: 'published', lastModified: '3 days ago', views: '2.1k' }
+          { id: 'home', name: 'Home Page', status: 'published' },
+          { id: 'products', name: 'Products Listing', status: 'published' },
+          { id: 'checkout', name: 'Checkout Flow', status: 'draft' },
+          { id: 'orders', name: 'Order Management', status: 'published' }
         ]
       },
       'analytics': {
         name: 'Analytics Dashboard',
         color: 'blue',
         pages: [
-          { id: 'overview', name: 'Overview Dashboard', type: 'dashboard', status: 'published', lastModified: '1 day ago', views: '3.5k' },
-          { id: 'sales', name: 'Sales Analytics', type: 'dashboard', status: 'published', lastModified: '2 days ago', views: '1.8k' },
-          { id: 'reports', name: 'Custom Reports', type: 'form', status: 'draft', lastModified: '4 days ago', views: '0' }
+          { id: 'overview', name: 'Overview Dashboard', status: 'published' },
+          { id: 'sales', name: 'Sales Analytics', status: 'published' },
+          { id: 'reports', name: 'Custom Reports', status: 'draft' }
         ]
       },
       'hr': {
         name: 'HR Management',
         color: 'emerald',
         pages: [
-          { id: 'employees', name: 'Employee Directory', type: 'table', status: 'published', lastModified: '3 days ago', views: '945' },
-          { id: 'attendance', name: 'Attendance Tracker', type: 'table', status: 'published', lastModified: '1 week ago', views: '1.5k' },
-          { id: 'leave', name: 'Leave Management', type: 'form', status: 'published', lastModified: '5 days ago', views: '678' },
-          { id: 'payroll', name: 'Payroll Dashboard', type: 'dashboard', status: 'draft', lastModified: '2 days ago', views: '0' },
-          { id: 'onboarding', name: 'Onboarding Form', type: 'form', status: 'published', lastModified: '1 week ago', views: '234' }
+          { id: 'employees', name: 'Employee Directory', status: 'published' },
+          { id: 'attendance', name: 'Attendance Tracker', status: 'published' },
+          { id: 'leave', name: 'Leave Management', status: 'published' },
+          { id: 'payroll', name: 'Payroll Dashboard', status: 'draft' },
+          { id: 'onboarding', name: 'Onboarding Form', status: 'published' }
         ]
       }
     };
 
     let currentFolder = null;
     let selectedFolderColor = 'amber';
-    let selectedPageType = 'blank';
 
     // Toggle dropdown menu
     function toggleMenu(btn) {
@@ -715,6 +640,9 @@
       document.getElementById('pages-view').classList.remove('view-hidden');
       document.getElementById('pages-view').classList.add('view-visible');
 
+      // Hide workspace overview
+      document.getElementById('workspace-overview').classList.add('hidden');
+
       // Render pages
       renderPages(folder.pages);
     }
@@ -736,6 +664,9 @@
       document.getElementById('pages-view').classList.remove('view-visible');
       document.getElementById('folders-view').classList.remove('view-hidden');
       document.getElementById('folders-view').classList.add('view-visible');
+
+      // Show workspace overview
+      document.getElementById('workspace-overview').classList.remove('hidden');
     }
 
     // Render pages in the current folder
@@ -754,87 +685,95 @@
       });
     }
 
-    // Create page card element
+    // Create page card element - simplified without type and lastModified
     function createPageCard(page, index) {
       const card = document.createElement('div');
-      card.className = `group relative bg-white border border-red-100 rounded-2xl overflow-hidden hover-lift transition-all duration-300 animate-slide-up`;
+      card.className = `page-card group relative bg-white border border-red-100 rounded-2xl hover-lift transition-all duration-300 cursor-pointer animate-slide-up min-h-[200px]`;
       card.style.animationDelay = `${(index + 1) * 0.05}s`;
 
-      const statusColor = page.status === 'published' ? 'green' : 'amber';
-      const statusText = page.status === 'published' ? 'Published' : 'Draft';
-
-      const typeIcons = {
-        'dashboard': 'dashboard',
-        'form': 'edit_note',
-        'table': 'table_chart',
-        'blank': 'draft'
-      };
+      const isPublished = page.status === 'published';
+      const statusBgClass = isPublished ? 'bg-green-100' : 'bg-amber-100';
+      const statusTextClass = isPublished ? 'text-green-700' : 'text-amber-700';
+      const statusText = isPublished ? 'Published' : 'Draft';
 
       card.innerHTML = `
         <!-- Page Preview -->
-        <div class="h-32 bg-gradient-to-br from-gray-50 to-gray-100 relative flex items-center justify-center border-b border-gray-100">
-          <div class="w-16 h-16 rounded-xl page-icon-gradient flex items-center justify-center text-white shadow-lg">
-            <span class="material-symbols-outlined text-3xl">${typeIcons[page.type] || 'description'}</span>
+        <div class="h-28 bg-gradient-to-br from-gray-50 to-gray-100 relative flex items-center justify-center border-b border-gray-100 rounded-t-2xl">
+          <div class="w-12 h-12 rounded-lg bg-white shadow-sm flex items-center justify-center">
+            <span class="material-symbols-outlined text-gray-400 text-2xl">description</span>
           </div>
           <div class="absolute top-3 right-3">
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-${statusColor}-100 text-${statusColor}-700">
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${statusBgClass} ${statusTextClass}">
               ${statusText}
             </span>
           </div>
         </div>
-        
+
         <!-- Page Info -->
         <div class="p-5">
-          <div class="flex items-start justify-between mb-2">
-            <h3 class="font-bold text-gray-900">${page.name}</h3>
-            <div class="relative">
-              <button onclick="event.stopPropagation(); toggleMenu(this)" class="p-1.5 rounded-lg hover:bg-red-50 transition-colors">
+          <div class="flex items-start justify-between mb-4">
+            <h3 class="font-bold text-gray-900 pr-2">${page.name}</h3>
+            <div class="relative flex-shrink-0">
+              <button onclick="event.stopPropagation(); togglePageMenu(this)" class="p-1.5 rounded-lg hover:bg-red-50 transition-colors">
                 <span class="material-symbols-outlined text-gray-400 text-xl">more_vert</span>
               </button>
-              <div class="dropdown-menu hidden absolute right-0 mt-1 w-40 bg-white border border-red-100 rounded-xl shadow-lg z-20 overflow-hidden">
-                <button onclick="event.stopPropagation(); openPageInCanvas('${page.id}')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-base">edit</span>
-                  Edit
+              <div class="dropdown-menu hidden absolute right-0 top-full mt-1 w-44 bg-white border border-red-100 rounded-xl shadow-xl z-50">
+                <button onclick="event.stopPropagation(); openPageInCanvas('${page.id}')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                  <span class="material-symbols-outlined text-lg">edit</span>
+                  Edit Page
                 </button>
-                <button class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-base">content_copy</span>
+                <button onclick="event.stopPropagation()" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                  <span class="material-symbols-outlined text-lg">content_copy</span>
                   Duplicate
                 </button>
-                <button class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-base">drive_file_rename_outline</span>
+                <button onclick="event.stopPropagation()" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                  <span class="material-symbols-outlined text-lg">drive_file_rename_outline</span>
                   Rename
                 </button>
-                <button class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-red-100">
-                  <span class="material-symbols-outlined text-base">delete</span>
+                <button onclick="event.stopPropagation()" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                  <span class="material-symbols-outlined text-lg">open_in_new</span>
+                  Preview
+                </button>
+                <div class="border-t border-red-100"></div>
+                <button onclick="event.stopPropagation()" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                  <span class="material-symbols-outlined text-lg">delete</span>
                   Delete
                 </button>
               </div>
             </div>
           </div>
-          
-          <div class="flex items-center gap-3 text-xs text-gray-500 mb-4">
-            <span class="capitalize">${page.type}</span>
-            <span>•</span>
-            <span>${page.lastModified}</span>
-          </div>
-          
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1 text-xs text-gray-500">
-              <span class="material-symbols-outlined text-sm">visibility</span>
-              <span>${page.views} views</span>
-            </div>
-            <button onclick="event.stopPropagation(); openPageInCanvas('${page.id}')" 
-              class="flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 transition-colors">
-              <span>Open</span>
-              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+
+          <div class="flex items-center justify-end pt-3 border-t border-gray-100">
+            <button onclick="event.stopPropagation(); openPageInCanvas('${page.id}')" class="flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors group/btn">
+              <span>Open Page</span>
+              <span class="material-symbols-outlined text-base group-hover/btn:translate-x-0.5 transition-transform">arrow_forward</span>
             </button>
           </div>
         </div>
       `;
 
-      card.onclick = () => openPageInCanvas(page.id);
+      card.onclick = (e) => {
+        if (!e.target.closest('.dropdown-menu') && !e.target.closest('button')) {
+          openPageInCanvas(page.id);
+        }
+      };
 
       return card;
+    }
+
+    // Toggle page menu (separate function for better control)
+    function togglePageMenu(btn) {
+      event.stopPropagation();
+      const allMenus = document.querySelectorAll('.dropdown-menu');
+      const currentMenu = btn.nextElementSibling;
+
+      allMenus.forEach(menu => {
+        if (menu !== currentMenu) {
+          menu.classList.add('hidden');
+        }
+      });
+
+      currentMenu.classList.toggle('hidden');
     }
 
     // Open page in canvas
@@ -864,33 +803,6 @@
       document.getElementById('page-name-input').value = '';
     }
 
-    function selectFolderColor(btn, color) {
-      selectedFolderColor = color;
-      // Remove ring from all color buttons
-      btn.parentElement.querySelectorAll('button').forEach(b => {
-        b.classList.remove('ring-2', 'ring-offset-2');
-        b.classList.remove('ring-amber-500', 'ring-blue-500', 'ring-emerald-500', 'ring-purple-500', 'ring-rose-500', 'ring-cyan-500');
-      });
-      // Add ring to selected
-      btn.classList.add('ring-2', 'ring-offset-2', `ring-${color}-500`);
-    }
-
-    function selectPageType(btn, type) {
-      selectedPageType = type;
-      // Remove selected state from all
-      document.querySelectorAll('.page-type-btn').forEach(b => {
-        b.classList.remove('selected', 'bg-red-50', 'border-red-500');
-        b.classList.add('bg-gray-50', 'border-gray-200');
-        b.querySelector('.material-symbols-outlined').classList.remove('text-red-600');
-        b.querySelector('.material-symbols-outlined').classList.add('text-gray-600');
-      });
-      // Add selected state
-      btn.classList.add('selected', 'bg-red-50', 'border-red-500');
-      btn.classList.remove('bg-gray-50', 'border-gray-200');
-      btn.querySelector('.material-symbols-outlined').classList.add('text-red-600');
-      btn.querySelector('.material-symbols-outlined').classList.remove('text-gray-600');
-    }
-
     function createFolder() {
       const name = document.getElementById('folder-name-input').value.trim();
       const desc = document.getElementById('folder-desc-input').value.trim();
@@ -900,11 +812,8 @@
         return;
       }
 
-      // Here you would typically send to backend
       console.log('Creating folder:', { name, desc, color: selectedFolderColor });
-
       closeCreateFolderModal();
-      // Refresh or add folder to grid
       alert('Folder created successfully!');
     }
 
@@ -916,12 +825,9 @@
         return;
       }
 
-      // Here you would typically send to backend
-      console.log('Creating page:', { name, type: selectedPageType, folder: currentFolder });
-
+      console.log('Creating page:', { name, folder: currentFolder });
       closeCreatePageModal();
-      // Open canvas with new page
-      window.location.href = `/canvas.html?folder=${currentFolder}&page=new&type=${selectedPageType}&name=${encodeURIComponent(name)}`;
+      window.location.href = `/canvas.html?folder=${currentFolder}&page=new&name=${encodeURIComponent(name)}`;
     }
 
     // Keyboard shortcuts
@@ -929,6 +835,10 @@
       if (e.key === 'Escape') {
         closeCreateFolderModal();
         closeCreatePageModal();
+        // Also close any open dropdown menus
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+          menu.classList.add('hidden');
+        });
       }
     });
 
@@ -942,7 +852,6 @@
       });
     });
   </script>
-
 </body>
 
 </html>
