@@ -778,7 +778,7 @@
 
     // Open page in canvas
     function openPageInCanvas(pageId) {
-      window.location.href = `/canvas.html?folder=${currentFolder}&page=${pageId}`;
+      window.location.href = `canvas.html?folder=${currentFolder}&page=${pageId}`;
     }
 
     // Modal Functions
@@ -827,7 +827,7 @@
 
       console.log('Creating page:', { name, folder: currentFolder });
       closeCreatePageModal();
-      window.location.href = `/canvas.html?folder=${currentFolder}&page=new&name=${encodeURIComponent(name)}`;
+      window.location.href = `canvas.html?folder=${currentFolder}&page=new&name=${encodeURIComponent(name)}`;
     }
 
     // Keyboard shortcuts
